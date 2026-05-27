@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFortuneStore } from '@/stores/fortuneStore';
 import { useSajuMutation } from '@/hooks/mutations/useSajuMutation';
@@ -63,6 +63,10 @@ export default function ResultPage() {
 
   // 링크 복사 완료 토스트 알림 상태
   const [showToast, setShowToast] = useState<boolean>(false);
+  // 캡처 중 상태
+  const [isCapturing, setIsCapturing] = useState<boolean>(false);
+  // 결과 영역 ref (화면 캡처용)
+  const captureRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // 테마 또는 입력 데이터가 없으면 비정상 접근이므로 홈으로 차단
@@ -77,19 +81,69 @@ export default function ResultPage() {
   // 링크 복사하기 핸들러
   const handleCopyLink = () => {
     if (typeof window !== 'undefined') {
-      const shareUrl = window.location.origin; // 도메인 주소 복사
+      const shareUrl = window.location.origin;
       navigator.clipboard.writeText(shareUrl).then(() => {
         setShowToast(true);
-        setTimeout(() => setShowToast(false), 2000); // 2초 뒤 토스트 제거
+        setTimeout(() => setShowToast(false), 2000);
       });
     }
   };
 
   // 카카오톡 공유하기 핸들러
   const handleKakaoShare = () => {
-    alert(
-      '🐭 [카카오 공유 설정] 찍쥐가 카카오톡 SDK 연결부를 완벽하게 개척했다 찍!\n실제 도메인 배포 시 Javascript Key를 주입하면 곧바로 카카오톡 메신저 공유로 쏠 수 있다 찍! 🚀'
-    );
+    if (typeof window === 'undefined' || !window.Kakao) {
+      alert('카카오톡 SDK가 아직 로드되지 않았어요. 잠시 후 다시 시도해 보세요.');
+      return;
+    }
+
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY ?? '');
+    }
+
+    const siteUrl = window.location.origin;
+
+    window.Kakao.Share.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: '찍쥐가 제 운세를 밝혀냈어요',
+        description: data?.summary ?? '찍쥐의 명쾌한 사주 풀이를 확인해 보세요',
+        imageUrl: `${siteUrl}/og-image.png`,
+        link: {
+          mobileWebUrl: siteUrl,
+          webUrl: siteUrl,
+        },
+      },
+      buttons: [
+        {
+          title: '나도 운세 보러 가기',
+          link: {
+            mobileWebUrl: siteUrl,
+            webUrl: siteUrl,
+          },
+        },
+      ],
+    });
+  };
+
+  // 화면 캡처 핸들러
+  const handleCapture = async () => {
+    if (!captureRef.current) return;
+    setIsCapturing(true);
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = await html2canvas(captureRef.current, {
+        backgroundColor: '#F9FAFB',
+        scale: 2,
+        useCORS: true,
+        scrollY: -window.scrollY,
+      });
+      const link = document.createElement('a');
+      link.download = '찍쥐-사주풀이.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } finally {
+      setIsCapturing(false);
+    }
   };
 
   const handleRestart = () => {
@@ -122,21 +176,21 @@ export default function ResultPage() {
           }}
         >
           🔍 찍쥐가 돋보기로 생년월일 명식을<br />
-          열심히 대조하며 땀 흘려 해독하고 있다 찍!<br />
-          <span style={{ color: '#7C3AED' }}>인생의 비결</span>이 곧 도출된다 찍!
+          열심히 대조하며 땀 흘려 해독하고 있어요<br />
+          <span style={{ color: '#7C3AED' }}>인생의 비결</span>이 곧 도출됩니다
         </div>
 
         {/* 로딩용 대기 문구 */}
         <div className={styles.loadingText}>
           천간 지지의 기운을 쥐어짜는 중...<br />
-          <span style={{ fontSize: '11px', color: '#9CA3AF' }}>평균 5~10초 정도 소요된다 찍!</span>
+          <span style={{ fontSize: '11px', color: '#9CA3AF' }}>평균 5~10초 정도 소요됩니다</span>
         </div>
 
         {/* 로딩 화면 아래 구글 배너 광고 플레이스홀더 */}
         <div className={styles.adBanner}>
           <span className={styles.adLabel}>AD</span>
           <span style={{ fontSize: '24px', marginBottom: '4px' }}>🐹🧀</span>
-          <span className={styles.adText}>찍쥐에게 치즈를 후원하는 광고 협찬 영역이다 찍!</span>
+          <span className={styles.adText}>찍쥐에게 치즈를 후원하는 광고 협찬 영역이에요</span>
           <span style={{ fontSize: '9px', color: '#9CA3AF', marginTop: '2px' }}>
             (실제 구글 애드센스 Google AdSense 가 렌더링될 영역)
           </span>
@@ -162,14 +216,14 @@ export default function ResultPage() {
             maxWidth: '90%',
           }}
         >
-          앗! 명식을 풀다가 돋보기가 깨졌다 찍!<br />
-          네트워크 기운이 원활하지 않다 찍.<br />
+          앗! 명식을 풀다가 돋보기가 깨졌어요<br />
+          네트워크 기운이 원활하지 않아요 찍.<br />
           <span style={{ fontSize: '12px', display: 'block', marginTop: '8px', color: '#6B7280' }}>
-            (다시 시도해 보라 찍!)
+            (다시 시도해 보세요)
           </span>
         </div>
         <button className={styles.restartButton} onClick={handleRestart}>
-          다시 운세 보러 가기 찍
+          다시 운세 보러 가기
         </button>
       </div>
     );
@@ -197,7 +251,7 @@ export default function ResultPage() {
   ];
 
   return (
-    <div className={styles.resultContainer}>
+    <div className={styles.resultContainer} ref={captureRef}>
       {/* 1. 상단 타이틀 & 쥐 마스코트 */}
       <div style={{ textAlign: 'center', marginTop: '8px' }}>
         <Mascot
@@ -243,9 +297,9 @@ export default function ResultPage() {
 
       {/* 3. 대형 한줄 요약 말풍선 */}
       <div className={styles.summaryBubble}>
-        📢 한줄 요약 찍!<br />
+        📢 한줄 요약 <br />
         <span style={{ color: '#7C3AED', display: 'block', marginTop: '6px' }}>
-          "{data?.summary || '올해는 뜻밖의 횡재수와 치즈가 굴러들어오는 대운의 해다 찍!'}"
+          "{data?.summary || '올해는 뜻밖의 횡재수와 치즈가 굴러들어오는 대운의 해예요'}"
         </span>
       </div>
 
@@ -262,9 +316,9 @@ export default function ResultPage() {
       <div className={styles.adBanner}>
         <span className={styles.adLabel}>AD</span>
         <span style={{ fontSize: '24px', marginBottom: '4px' }}>🐹🧀</span>
-        <span className={styles.adText}>찍쥐에게 치즈를 후원하는 광고 협찬 영역이다 찍!</span>
+        <span className={styles.adText}>찍쥐에게 치즈를 후원하는 광고 협찬 영역이에요</span>
         <span style={{ fontSize: '9px', color: '#9CA3AF', marginTop: '2px' }}>
-          (여기에 애드센스 인피드/디스플레이 배너를 탑재할 수 있다 찍)
+          (여기에 애드센스 인피드/디스플레이 배너를 탑재할 수 있어요 찍)
         </span>
       </div>
 
@@ -283,11 +337,11 @@ export default function ResultPage() {
         ) : (
           <p style={{ color: '#4B5563', fontSize: '13px', fontWeight: 500, whiteSpace: 'pre-wrap' }}>
             {data?.detail ||
-              `네가 태어난 날의 하늘과 땅 기운을 분석해 보니 대단히 매력적인 천궁의 수호가 깃들어있다 찍! 
+              `태어나신 날의 하늘과 땅 기운을 분석해 보니 대단히 매력적인 천궁의 수호가 깃들어 있어요.
 
-특히 일주와 년주의 균형이 뛰어나서 어려운 상황이 와도 쥐구멍을 파헤쳐 결국 기회를 잡아내는 영리함이 돋보인다 찍. 
+특히 일주와 년주의 균형이 뛰어나서 어려운 상황이 와도 쥐구멍을 파헤쳐 결국 기회를 잡아내는 영리함이 돋보입니다.
 
-올해는 네가 준비한 씨앗들이 황금 벼 이삭으로 거듭나 곳간에 쌓이는 흐름이니 너무 조급해하지 말고 하루하루 즐겁게 치즈를 맛보듯 나아가라 찍!`}
+올해는 준비하신 씨앗들이 황금 벼 이삭으로 거듭나 곳간에 쌓이는 흐름이니 너무 조급해하지 마시고 하루하루 즐겁게 치즈를 맛보듯 나아가세요`}
           </p>
         )}
       </div>
@@ -465,7 +519,7 @@ export default function ResultPage() {
 
       {/* 8. SNS 카카오톡 및 링크 공유하기 */}
       <div className={styles.shareSection}>
-        <h4 className={styles.shareTitle}>📢 이 좋은 운세를 친구들에게 널리 공유해라 찍!</h4>
+        <h4 className={styles.shareTitle}>📢 이 좋은 운세를 친구들에게 널리 공유해 보세요</h4>
         <div className={styles.shareButtonGroup}>
           <button className={styles.shareKakao} onClick={handleKakaoShare}>
             💛 카카오톡 공유
@@ -474,17 +528,24 @@ export default function ResultPage() {
             🔗 링크 주소 복사
           </button>
         </div>
+        <button
+          className={styles.captureButton}
+          onClick={handleCapture}
+          disabled={isCapturing}
+        >
+          {isCapturing ? '📸 캡처 중...' : '📸 결과 이미지로 저장'}
+        </button>
       </div>
 
       {/* 9. 다시 운세 보기 버튼 */}
       <button className={styles.restartButton} onClick={handleRestart}>
-        🔄 다른 운세도 보러 가기 찍!
+        🔄 다른 운세도 보러 가기 
       </button>
 
       {/* 클립보드 복사 성공 시 애니메이션 토스트 */}
       {showToast && (
         <div className={styles.toast}>
-          📋 클립보드에 주소가 복사되었다 찍! 🐭
+          📋 클립보드에 주소가 복사되었어요 🐭
         </div>
       )}
     </div>

@@ -183,7 +183,7 @@ export const Mascot: React.FC<MascotProps> = ({ pose, className, size = 160 }) =
               </g>
               {/* 입 - 오물오물 점 */}
               <circle cx="80" cy="103" r="2.5" fill="#1F2937" />
-              
+
               {/* 조선 시대 선비 갓 (머리 위에 약간 삐딱하게 올려진 하찮은 갓) */}
               <g transform="translate(80, 58) rotate(-8)">
                 {/* 갓 챙 (아래 타원) */}
@@ -247,7 +247,7 @@ export const Mascot: React.FC<MascotProps> = ({ pose, className, size = 160 }) =
                 {/* 아래쪽 동전 */}
                 <ellipse cx="0" cy="8" rx="14" ry="6" fill="url(#coinGrad)" stroke="#1F2937" strokeWidth="2" />
                 <rect x="-3" y="6" width="6" height="4" fill="none" stroke="#1F2937" strokeWidth="1.5" />
-                
+
                 {/* 위쪽 동전 (약간 어긋남) */}
                 <ellipse cx="-4" cy="-2" rx="12" ry="5.5" fill="url(#coinGrad)" stroke="#1F2937" strokeWidth="2" />
                 <rect x="-7" y="-4" width="6" height="4" fill="none" stroke="#1F2937" strokeWidth="1.5" />

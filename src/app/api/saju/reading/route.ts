@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import KoreanLunarCalendar from 'korean-lunar-calendar';
 import { calculateSajuChart } from '@/utils/saju';
 import type { FortuneTheme, SajuChart, SajuInput, SajuReading, SajuReadingExtras, SajuReadingRequest } from '@/types/api';
 
@@ -29,16 +30,11 @@ function isSajuReadingRequest(value: unknown): value is SajuReadingRequest {
 
 // ─── 음력 → 양력 변환 ─────────────────────────────────────────────────────────
 
-async function toSolarDate(
+function toSolarDate(
   year: number,
   month: number,
   day: number
-): Promise<{ year: number; month: number; day: number }> {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const KoreanLunarCalendar = require('korean-lunar-calendar') as new () => {
-    setLunarDate(y: number, m: number, d: number, intercalation: boolean): boolean;
-    getSolarCalendar(): { year: number; month: number; day: number };
-  };
+): { year: number; month: number; day: number } {
   const cal = new KoreanLunarCalendar();
   cal.setLunarDate(year, month, day, false);
   return cal.getSolarCalendar();
@@ -216,10 +212,14 @@ function parseGeminiResponse(text: string): {
         typeof parsed.extras === 'object' && parsed.extras !== null
           ? (parsed.extras as SajuReadingExtras)
           : undefined;
+      console.log('[API] Gemini 응답 JSON 파싱 성공!');
       return { summary, keywords, detail, sections, extras };
-    } catch {
-      // JSON 파싱 실패 시 원문 그대로 사용
+    } catch (e: unknown) {
+      console.error('[API] Gemini 응답 JSON 파싱 실패 (파싱 에러):', e instanceof Error ? e.message : String(e));
+      console.log('[API] 파싱하려던 매칭 텍스트:', jsonMatch[0]);
     }
+  } else {
+    console.warn('[API] Gemini 응답에서 JSON 형태를 찾지 못했습니다.');
   }
   return { summary: '', detail: text };
 }
@@ -245,7 +245,7 @@ export async function POST(req: NextRequest) {
     let solarDay = input.birthDay;
 
     if (input.calendarType === 'lunar') {
-      const solar = await toSolarDate(input.birthYear, input.birthMonth, input.birthDay);
+      const solar = toSolarDate(input.birthYear, input.birthMonth, input.birthDay);
       solarYear = solar.year;
       solarMonth = solar.month;
       solarDay = solar.day;
@@ -266,27 +266,41 @@ export async function POST(req: NextRequest) {
     const genAI = new GoogleGenerativeAI(apiKey);
     const prompt = buildPrompt(theme, input, chart);
 
+    console.log(`[API] Gemini 호출 시작 - 테마: ${theme}, 모델 후보:`, ['gemini-2.5-flash', 'gemini-2.5-pro']);
+
     // 안정적인 모델 우선, 에러 발생 시 다음 모델로 폴백
-    const MODEL_FALLBACK = ['gemini-2.5-flash', 'gemini-2.5-pro'];
-    let responseText = '';
+    const MODEL_FALLBACK = ['gemini-2.0-flash-lite', 'gemini-2.5-flash']; let responseText = '';
     let lastError: unknown;
 
     for (const modelName of MODEL_FALLBACK) {
+      console.log(`[API] ${modelName} 모델 호출 시도 중...`);
       const model = genAI.getGenerativeModel({ model: modelName });
       try {
         const result = await model.generateContent(prompt);
         responseText = result.response.text().trim();
+        console.log(`[API] ${modelName} 호출 성공! 응답 길이: ${responseText.length}자`);
         break;
       } catch (err: unknown) {
         lastError = err;
+        const errMessage = err instanceof Error ? err.message : String(err);
+        console.error(`[API] ${modelName} 호출 실패! 에러:`, errMessage);
+
         const shouldFallback =
           err instanceof Error &&
           (err.message.includes('503') || err.message.includes('429') || err.message.includes('404') || err.message.includes('403'));
-        if (!shouldFallback) throw err; // 503, 429, 404, 403 이외 오류는 즉시 throw
+
+        if (!shouldFallback) {
+          console.error(`[API] 폴백 비대상 에러이므로 즉시 에러를 반환합니다.`);
+          throw err; // 503, 429, 404, 403 이외 오류는 즉시 throw
+        }
+        console.log(`[API] 에러 코드가 폴백 대상이므로 다음 모델로 시도합니다.`);
         // 오류면 다음 모델로 폴백 (마지막 모델까지 실패하면 아래서 throw)
       }
     }
-    if (!responseText) throw lastError;
+    if (!responseText) {
+      console.error('[API] 모든 모델 호출 실패');
+      throw lastError;
+    }
 
     const { summary, keywords, detail, sections, extras } = parseGeminiResponse(responseText);
 

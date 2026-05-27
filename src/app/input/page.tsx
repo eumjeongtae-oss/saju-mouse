@@ -131,7 +131,7 @@ export default function InputPage() {
               : selectedTheme === 'wealth'
               ? '대박 재물운'
               : '인연/연애 비책'}
-            을 분석한다 찍!
+            을 분석해드릴게요
           </span>
         </div>
 
@@ -165,14 +165,14 @@ export default function InputPage() {
               className={`${styles.segmentButton} ${calendarType === 'solar' ? styles.segmentActive : ''}`}
               onClick={() => setCalendarType('solar')}
             >
-              양력 (Solar) ☀️
+              양력 ☀️
             </button>
             <button
               type="button"
               className={`${styles.segmentButton} ${calendarType === 'lunar' ? styles.segmentActive : ''}`}
               onClick={() => setCalendarType('lunar')}
             >
-              음력 (Lunar) 🌙
+              음력 🌙
             </button>
           </div>
         </div>
@@ -247,7 +247,7 @@ export default function InputPage() {
               <div className={`${styles.checkbox} ${!knowsTime ? styles.checkboxChecked : ''}`}>
                 {!knowsTime && '✓'}
               </div>
-              태어난 시간을 모름 🤷‍♂️
+              태어난 시간을 몰라요 🤷‍♂️
             </div>
           </div>
 
@@ -271,12 +271,12 @@ export default function InputPage() {
 
         {/* 분석 버튼 */}
         <button type="submit" className={styles.submitButton}>
-          찍쥐야 내 운세 풀어줘라 찍! 🐭 🚀
+          찍쥐야, 내 운세 풀어줘요 🐭 🚀
         </button>
 
         {/* 뒤로 가기 */}
         <button type="button" className={styles.backButton} onClick={handleBack}>
-          ← 처음으로 돌아가기 찍
+          ← 처음으로 돌아가기
         </button>
       </form>
     </div>

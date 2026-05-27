@@ -67,37 +67,37 @@ export default function HomePage() {
       case 'general':
         return (
           <>
-            평생 명식을 돋보기로 다 뜯어보겠다 찍!<br />
-            <span className={styles.speechBubbleHighlight}>종합 사주</span> 풀 준비 완료 찍!
+            평생 명식을 돋보기로 다 뜯어볼게요 <br />
+            <span className={styles.speechBubbleHighlight}>종합 사주</span> 풀 준비 완료
           </>
         );
       case 'yearly':
         return (
           <>
-            {currentYear}년 운세를 다 쥐어짜주겠다 찍!<br />
-            <span className={styles.speechBubbleHighlight}>올해 운세</span> 확인하러 가자 찍!
+            {currentYear}년 운세를 다 쥐어짜드릴게요 <br />
+            <span className={styles.speechBubbleHighlight}>올해 운세</span> 확인하러 가요
           </>
         );
       case 'wealth':
         return (
           <>
             부자 쥐의 기운을 가득 담아 팍팍!<br />
-            <span className={styles.speechBubbleHighlight}>재물·직장운</span> 대박나보자 찍!
+            <span className={styles.speechBubbleHighlight}>재물·직장운</span> 대박 내봐요
           </>
         );
       case 'love':
         return (
           <>
-            양 볼이 발개지도록 설레는 기운 찍!<br />
-            <span className={styles.speechBubbleHighlight}>연애·대인관계</span>의 신비 찍!
+            양 볼이 발개지도록 설레는 기운 <br />
+            <span className={styles.speechBubbleHighlight}>연애·대인관계</span>의 신비
           </>
         );
       case 'idle':
       default:
         return (
           <>
-            안녕! 나는 사주를 공부한 <span className={styles.speechBubbleHighlight}>찍쥐</span>다 찍!<br />
-            오늘의 운세 테마를 선택해줘라 찍!
+            안녕하세요! 저는 사주를 공부한 <span className={styles.speechBubbleHighlight}>찍쥐</span>예요 <br />
+            오늘의 운세 테마를 선택해 주세요
           </>
         );
     }

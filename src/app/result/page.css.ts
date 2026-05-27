@@ -568,6 +568,43 @@ export const traitItem = style({
   lineHeight: '1.4',
 });
 
+export const captureButton = style({
+  width: '100%',
+  backgroundColor: '#EEF2FF',
+  color: '#4C1D95',
+  borderWidth: '2.5px',
+  borderStyle: 'solid',
+  borderColor: '#1F2937',
+  borderRadius: vars.radii.md,
+  padding: '12px',
+  fontSize: vars.fontSizes.sm,
+  fontWeight: 800,
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '8px',
+  boxShadow: '3px 3px 0px #1F2937',
+  transition: 'all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1)',
+
+  selectors: {
+    '&:hover': {
+      backgroundColor: '#E0E7FF',
+      transform: 'translate(-2px, -2px)',
+      boxShadow: '5px 5px 0px #1F2937',
+    },
+    '&:active': {
+      transform: 'translate(1px, 1px)',
+      boxShadow: '1px 1px 0px #1F2937',
+    },
+    '&:disabled': {
+      opacity: 0.6,
+      cursor: 'not-allowed',
+      transform: 'none',
+    },
+  },
+});
+
 // ─── 하찮은 클립보드 복사 성공 토스트 팝업
 const slideUp = keyframes({
   from: { transform: 'translateY(100px)', opacity: 0 },

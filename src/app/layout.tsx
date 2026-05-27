@@ -1,18 +1,47 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import '@/styles/global.css';
 import { Providers } from './providers';
 import { Logo } from '@/components/Logo';
 import * as styles from './layout.css';
 
+const siteUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : 'http://localhost:3000';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: '찍찍사주 - 귀여운 쥐와 함께하는 나만의 운세 🔮',
-  description: '하찮고 귀여운 쥐 마스코트 찍쥐가 명쾌하게 풀어주는 현대적인 사주팔자/만세력 서비스다 찍!',
+  description: '하찮고 귀여운 쥐 마스코트 찍쥐가 명쾌하게 풀어주는 현대적인 사주팔자/만세력 서비스다 ',
+  openGraph: {
+    title: '찍찍사주 - 귀여운 쥐와 함께하는 나만의 운세 🔮',
+    description: '하찮고 귀여운 쥐 마스코트 찍쥐가 명쾌하게 풀어주는 현대적인 사주팔자/만세력 서비스다 ',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: '찍찍사주 미리보기',
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '찍찍사주 - 귀여운 쥐와 함께하는 나만의 운세 🔮',
+    description: '하찮고 귀여운 쥐 마스코트 찍쥐가 명쾌하게 풀어주는 현대적인 사주팔자/만세력 서비스다 ',
+    images: ['/og-image.png'],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
       <body>
+        <Script
+          src="https://developers.kakao.com/sdk/js/kakao.js"
+          strategy="afterInteractive"
+        />
         <Providers>
           <div className={styles.container}>
             {/* 공통 브랜드 헤더 */}
@@ -27,7 +56,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             {/* 공통 하단 푸터 */}
             <footer className={styles.footer}>
-              © {new Date().getFullYear()} 찍찍사주. All rights reserved.
+              <p className={styles.footerCopyright}>
+                © {new Date().getFullYear()} 찍찍사주. All rights reserved.
+              </p>
+              <div className={styles.footerLinks}>
+                <a href="mailto:eumjeongtae@gmail.com" className={styles.footerLink}>
+                  Contact
+                </a>
+                <span className={styles.footerDivider}>·</span>
+                <a href="/privacy" className={styles.footerLink}>
+                  개인정보처리방침
+                </a>
+              </div>
             </footer>
           </div>
         </Providers>

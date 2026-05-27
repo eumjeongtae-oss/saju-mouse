@@ -34,11 +34,40 @@ export const main = style({
 
 export const footer = style({
   textAlign: 'center',
-  fontSize: '11px',
-  color: '#9CA3AF',
   paddingTop: vars.space.md,
   paddingBottom: vars.space.xs,
   marginTop: 'auto',
-  fontWeight: 500,
   width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '4px',
+});
+
+export const footerCopyright = style({
+  fontSize: '11px',
+  color: '#9CA3AF',
+  fontWeight: 500,
+  margin: 0,
+});
+
+export const footerLinks = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+});
+
+export const footerLink = style({
+  fontSize: '11px',
+  color: '#9CA3AF',
+  textDecoration: 'none',
+  ':hover': {
+    color: '#6B7280',
+    textDecoration: 'underline',
+  },
+});
+
+export const footerDivider = style({
+  fontSize: '11px',
+  color: '#D1D5DB',
 });
