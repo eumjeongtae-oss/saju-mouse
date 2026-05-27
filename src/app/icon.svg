@@ -1,0 +1,44 @@
+<svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 왼쪽 귀 -->
+  <circle cx="26" cy="28" r="18" fill="#E5E7EB" stroke="#1F2937" stroke-width="4" />
+  <circle cx="26" cy="28" r="11" fill="#FFA5D2" />
+
+  <!-- 오른쪽 귀 -->
+  <circle cx="74" cy="28" r="18" fill="#E5E7EB" stroke="#1F2937" stroke-width="4" />
+  <circle cx="74" cy="28" r="11" fill="#FFA5D2" />
+
+  <!-- 얼굴/몸통 (찹쌀떡 모양 둥근 쥐 - 작은 탭 크기에서도 눈에 띄게 외곽선을 4.5px로 굵게 조정) -->
+  <path
+    d="M20 65C20 40 33 32 50 32C67 32 80 40 80 65C80 82 67 85 50 85C33 85 20 82 20 65Z"
+    fill="#FFFFFF"
+    stroke="#1F2937"
+    stroke-width="4.5"
+    stroke-linejoin="round"
+  />
+
+  <!-- 하찮은 쥐 눈 (더 또렷하게 크기를 4px로 확대) -->
+  <circle cx="38" cy="53" r="4" fill="#1F2937" />
+  <circle cx="62" cy="53" r="4" fill="#1F2937" />
+
+  <!-- 하찮은 쥐 입 (ㅅ 모양) -->
+  <path
+    d="M46 63C48 65 50 65 50 65C50 65 52 65 54 63"
+    stroke="#1F2937"
+    stroke-width="3"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <!-- 분홍색 작은 코 -->
+  <ellipse cx="50" cy="59" rx="5" ry="3.5" fill="#FF70B6" stroke="#1F2937" stroke-width="1.5" />
+
+  <!-- 발그레 볼터치 -->
+  <circle cx="30" cy="61" r="5.5" fill="#FFA5D2" fill-opacity="0.8" />
+  <circle cx="70" cy="61" r="5.5" fill="#FFA5D2" fill-opacity="0.8" />
+
+  <!-- 하찮은 수염 -->
+  <path d="M11 58L21 59" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M10 65L19 64" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M89 58L79 59" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M90 65L81 64" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" />
+</svg>
