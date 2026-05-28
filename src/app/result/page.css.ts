@@ -605,6 +605,97 @@ export const captureButton = style({
   },
 });
 
+// ─── 커피 후원 섹션 ────────────────────────────────────────────────────────────
+
+export const coffeeSection = style({
+  backgroundColor: '#FFF7ED',
+  borderWidth: '2.5px',
+  borderStyle: 'solid',
+  borderColor: '#1F2937',
+  borderRadius: vars.radii.lg,
+  padding: '16px 20px',
+  boxShadow: '4px 4px 0px #1F2937',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
+  textAlign: 'center',
+});
+
+export const coffeeTitle = style({
+  fontSize: '13px',
+  fontWeight: 900,
+  color: '#92400E',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '6px',
+  margin: 0,
+});
+
+export const coffeeDesc = style({
+  fontSize: '11px',
+  fontWeight: 600,
+  color: '#B45309',
+  lineHeight: '1.5',
+  margin: 0,
+});
+
+export const coffeeAccountRow = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '8px',
+  backgroundColor: '#FFFFFF',
+  borderWidth: '2px',
+  borderStyle: 'solid',
+  borderColor: '#1F2937',
+  borderRadius: vars.radii.md,
+  padding: '10px 14px',
+  boxShadow: '2px 2px 0px #1F2937',
+});
+
+export const coffeeAccountText = style({
+  fontSize: '14px',
+  fontWeight: 900,
+  color: '#1F2937',
+  letterSpacing: '0.03em',
+  fontFamily: vars.fonts.mono,
+});
+
+export const coffeeBank = style({
+  fontSize: '11px',
+  fontWeight: 700,
+  color: '#6B7280',
+});
+
+export const coffeeCopyButton = style({
+  backgroundColor: '#D97706',
+  color: '#FFFFFF',
+  borderWidth: '2px',
+  borderStyle: 'solid',
+  borderColor: '#1F2937',
+  borderRadius: vars.radii.sm,
+  padding: '5px 10px',
+  fontSize: '11px',
+  fontWeight: 800,
+  cursor: 'pointer',
+  boxShadow: '2px 2px 0px #1F2937',
+  transition: 'all 0.15s ease',
+  whiteSpace: 'nowrap',
+
+  selectors: {
+    '&:hover': {
+      backgroundColor: '#B45309',
+      transform: 'translate(-1px, -1px)',
+      boxShadow: '3px 3px 0px #1F2937',
+    },
+    '&:active': {
+      transform: 'translate(1px, 1px)',
+      boxShadow: '0px 0px 0px #1F2937',
+    },
+  },
+});
+
 // ─── 하찮은 클립보드 복사 성공 토스트 팝업
 const slideUp = keyframes({
   from: { transform: 'translateY(100px)', opacity: 0 },

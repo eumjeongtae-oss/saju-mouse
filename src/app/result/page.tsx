@@ -60,6 +60,7 @@ function ResultPageContent() {
   const { mutate, data, isPending, isError } = useSajuMutation();
 
   const [showToast, setShowToast] = useState<boolean>(false);
+  const [showCoffeeToast, setShowCoffeeToast] = useState<boolean>(false);
   const [isCapturing, setIsCapturing] = useState<boolean>(false);
   const captureRef = useRef<HTMLDivElement>(null);
 
@@ -551,7 +552,31 @@ function ResultPageContent() {
         </button>
       </div>
 
-      {/* 9. 다시 운세 보기 버튼 */}
+      {/* 9. 개발자 커피 후원 섹션 */}
+      <div className={styles.coffeeSection}>
+        <p className={styles.coffeeTitle}>☕ 찍쥐에게 커피 한 잔 사줄래요?</p>
+        <p className={styles.coffeeDesc}>
+          무료로 운세를 즐기셨다면, 개발자에게 커피 한 잔 후원해 주세요 🙏<br />
+          찍쥐가 더 열심히 명식을 파헤칠게요!
+        </p>
+        <div className={styles.coffeeAccountRow}>
+          <span className={styles.coffeeBank}>케이뱅크</span>
+          <span className={styles.coffeeAccountText}>100206753204</span>
+          <button
+            className={styles.coffeeCopyButton}
+            onClick={() => {
+              navigator.clipboard.writeText('100206753204').then(() => {
+                setShowCoffeeToast(true);
+                setTimeout(() => setShowCoffeeToast(false), 2000);
+              });
+            }}
+          >
+            복사
+          </button>
+        </div>
+      </div>
+
+      {/* 10. 다시 운세 보기 버튼 */}
       <button className={styles.restartButton} onClick={handleRestart}>
         🔄 다른 운세도 보러 가기
       </button>
@@ -560,6 +585,11 @@ function ResultPageContent() {
       {showToast && (
         <div className={styles.toast}>
           📋 클립보드에 주소가 복사되었어요 🐭
+        </div>
+      )}
+      {showCoffeeToast && (
+        <div className={styles.toast}>
+          ☕ 계좌번호가 복사되었어요! 감사해요 🐭
         </div>
       )}
     </div>
