@@ -87,6 +87,7 @@ export default function InputPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedTheme) return;
 
     const inputData: SajuInput = {
       calendarType,
@@ -98,7 +99,7 @@ export default function InputPage() {
     };
 
     setSajuInput(inputData);
-    router.push('/result'); // 결과 페이지로 이동 (Step 3)
+    router.push('/result');
   };
 
   // 비정상 진입 보호

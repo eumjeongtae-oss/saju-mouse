@@ -266,10 +266,9 @@ export async function POST(req: NextRequest) {
     const genAI = new GoogleGenerativeAI(apiKey);
     const prompt = buildPrompt(theme, input, chart);
 
-    console.log(`[API] Gemini 호출 시작 - 테마: ${theme}, 모델 후보:`, ['gemini-2.5-flash', 'gemini-2.5-pro']);
+    console.log(`[API] Gemini 호출 시작 - 테마: ${theme}, 모델 후보:`, ['gemini-2.5-flash-lite']);
 
-    // 안정적인 모델 우선, 에러 발생 시 다음 모델로 폴백
-    const MODEL_FALLBACK = ['gemini-2.0-flash-lite', 'gemini-2.5-flash']; let responseText = '';
+    const MODEL_FALLBACK = ['gemini-2.5-flash-lite']; let responseText = '';
     let lastError: unknown;
 
     for (const modelName of MODEL_FALLBACK) {

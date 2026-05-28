@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useFortuneStore } from '@/stores/fortuneStore';
 import { useSajuMutation } from '@/hooks/mutations/useSajuMutation';
 import { Mascot } from '@/components/Mascot';
-import { SajuChart, SajuReading } from '@/types/api';
+import { SajuChart } from '@/types/api';
+import { decodeResultParams } from '@/utils/resultParams';
 import * as styles from './page.css';
 
 // 프로젝트 정식 타입 SajuChart와 100% 부합하는 Fallback 계산 헬퍼 함수
@@ -20,16 +21,12 @@ const getFallbackSajuChart = (
   // 지지 12지
   const earth = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
 
-  // 간단한 수식 기반 한자 매핑 (가상 만세력 제공)
   const yIndexH = (year - 4) % 10;
   const yIndexE = (year - 4) % 12;
-
   const mIndexH = (month + 2) % 10;
   const mIndexE = (month + 10) % 12;
-
   const dIndexH = (day + 7) % 10;
   const dIndexE = (day + 4) % 12;
-
   const hIndexH = hour !== null ? (hour + 1) % 10 : 4;
   const hIndexE = hour !== null ? Math.floor((hour + 1) / 2) % 12 : 0;
 
@@ -56,33 +53,46 @@ const getFallbackSajuChart = (
   };
 };
 
-export default function ResultPage() {
+function ResultPageContent() {
   const router = useRouter();
-  const { selectedTheme, sajuInput, reset } = useFortuneStore();
+  const searchParams = useSearchParams();
+  const { selectedTheme, sajuInput, setTheme, setSajuInput, reset } = useFortuneStore();
   const { mutate, data, isPending, isError } = useSajuMutation();
 
-  // 링크 복사 완료 토스트 알림 상태
   const [showToast, setShowToast] = useState<boolean>(false);
-  // 캡처 중 상태
   const [isCapturing, setIsCapturing] = useState<boolean>(false);
-  // 결과 영역 ref (화면 캡처용)
   const captureRef = useRef<HTMLDivElement>(null);
 
+  // 마운트 시 한 번만 실행: Zustand 스토어 우선, 없으면 URL 파라미터에서 복원
+  const initialThemeRef = useRef(selectedTheme);
+  const initialInputRef = useRef(sajuInput);
+
   useEffect(() => {
-    // 테마 또는 입력 데이터가 없으면 비정상 접근이므로 홈으로 차단
-    if (!selectedTheme || !sajuInput) {
+    const theme = initialThemeRef.current;
+    const input = initialInputRef.current;
+
+    if (theme && input) {
+      mutate({ theme, input });
+      return;
+    }
+
+    // 새로고침 또는 공유 링크 진입: URL 파라미터에서 복원
+    const decoded = decodeResultParams(searchParams);
+    if (!decoded) {
       router.replace('/');
       return;
     }
-    // 사주 풀이 LLM API 뮤테이션 호출
-    mutate({ theme: selectedTheme, input: sajuInput });
-  }, [selectedTheme, sajuInput, mutate, router]);
+
+    setTheme(decoded.theme);
+    setSajuInput(decoded.input);
+    mutate({ theme: decoded.theme, input: decoded.input });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 링크 복사하기 핸들러
   const handleCopyLink = () => {
     if (typeof window !== 'undefined') {
-      const shareUrl = window.location.origin;
-      navigator.clipboard.writeText(shareUrl).then(() => {
+      navigator.clipboard.writeText(window.location.origin).then(() => {
         setShowToast(true);
         setTimeout(() => setShowToast(false), 2000);
       });
@@ -147,21 +157,19 @@ export default function ResultPage() {
   };
 
   const handleRestart = () => {
-    reset(); // Zustand 상태 리셋
+    reset();
     router.push('/');
   };
 
-  // 1. 분석 중 로딩 화면 (구글 배너 및 로딩 애니메이션 포함)
+  // 1. 분석 중 로딩 화면
   if (isPending) {
     return (
       <div className={styles.loadingContainer}>
-        {/* Wiggle 모션 쥐 마스코트 및 땀방울 효과 */}
         <div className={styles.loadingMascotWrapper}>
           <Mascot pose="general" size={150} />
           <span className={styles.sweat}>💦</span>
         </div>
 
-        {/* 하찮은 말풍선 */}
         <div
           style={{
             backgroundColor: '#FFFFFF',
@@ -180,13 +188,11 @@ export default function ResultPage() {
           <span style={{ color: '#7C3AED' }}>인생의 비결</span>이 곧 도출됩니다
         </div>
 
-        {/* 로딩용 대기 문구 */}
         <div className={styles.loadingText}>
           천간 지지의 기운을 쥐어짜는 중...<br />
           <span style={{ fontSize: '11px', color: '#9CA3AF' }}>평균 5~10초 정도 소요됩니다</span>
         </div>
 
-        {/* 로딩 화면 아래 구글 배너 광고 플레이스홀더 */}
         <div className={styles.adBanner}>
           <span className={styles.adLabel}>AD</span>
           <span style={{ fontSize: '24px', marginBottom: '4px' }}>🐹🧀</span>
@@ -229,10 +235,9 @@ export default function ResultPage() {
     );
   }
 
-  // sajuInput이 null이 아님을 확실하게 타입 좁히기(Type Narrowing)
+  // sajuInput이 null이 아님을 확실하게 타입 좁히기
   if (!sajuInput) return null;
 
-  // 정식 API 스펙에 부합하는 사주 명식(SajuChart) 가져오기
   const chart: SajuChart =
     data?.chart ||
     getFallbackSajuChart(
@@ -242,7 +247,6 @@ export default function ResultPage() {
       sajuInput.birthHour
     );
 
-  // 사주팔자 4개 기둥 매핑 정의 (Type-safe)
   const pillarKeys = [
     { key: 'yearPillar' as const, label: '년주', name: '년' },
     { key: 'monthPillar' as const, label: '월주', name: '월' },
@@ -278,7 +282,7 @@ export default function ResultPage() {
         </h2>
       </div>
 
-      {/* 2. 만세력 사주팔자 4주 한자 칩 (8글자 카드) - 정식 스펙 매칭 */}
+      {/* 2. 만세력 사주팔자 4주 한자 칩 */}
       <div className={styles.pillarsGrid}>
         {pillarKeys.map((item) => {
           const pillar = chart[item.key];
@@ -312,7 +316,7 @@ export default function ResultPage() {
         </div>
       )}
 
-      {/* 4. 구글 배너 광고 영역 (중간 배치로 집중 유도) */}
+      {/* 4. 구글 배너 광고 영역 */}
       <div className={styles.adBanner}>
         <span className={styles.adLabel}>AD</span>
         <span style={{ fontSize: '24px', marginBottom: '4px' }}>🐹🧀</span>
@@ -356,7 +360,6 @@ export default function ResultPage() {
             {selectedTheme === 'love' && '💝 연애 핵심 요약'}
           </h3>
 
-          {/* general: 일간 기운 + 직업 카드 + 궁합 */}
           {selectedTheme === 'general' && (
             <>
               {data.extras.birthElement && (
@@ -397,7 +400,6 @@ export default function ResultPage() {
             </>
           )}
 
-          {/* yearly: 행운/조심 달 + 핵심 행동 */}
           {selectedTheme === 'yearly' && (
             <>
               {(data.extras.bestMonth || data.extras.worstMonth) && (
@@ -421,7 +423,6 @@ export default function ResultPage() {
             </>
           )}
 
-          {/* wealth: 재물 유형 + 추천 분야 + 낭비 패턴 */}
           {selectedTheme === 'wealth' && (
             <>
               {data.extras.moneyType && (
@@ -449,7 +450,6 @@ export default function ResultPage() {
             </>
           )}
 
-          {/* love: 연애 스타일 + 궁합/피해야 할 타입 + 인연 시기 */}
           {selectedTheme === 'love' && (
             <>
               {data.extras.loveStyle && (
@@ -539,7 +539,7 @@ export default function ResultPage() {
 
       {/* 9. 다시 운세 보기 버튼 */}
       <button className={styles.restartButton} onClick={handleRestart}>
-        🔄 다른 운세도 보러 가기 
+        🔄 다른 운세도 보러 가기
       </button>
 
       {/* 클립보드 복사 성공 시 애니메이션 토스트 */}
@@ -549,5 +549,13 @@ export default function ResultPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ResultPage() {
+  return (
+    <Suspense>
+      <ResultPageContent />
+    </Suspense>
   );
 }
