@@ -17,8 +17,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: '/kakaotalk-profile.png',
-        width: 1024,
-        height: 1024,
+        width: 600,
+        height: 600,
         alt: '찍찍사주 미리보기',
       },
     ],
