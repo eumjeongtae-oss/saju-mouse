@@ -47,6 +47,84 @@ export const loadingText = style({
   lineHeight: '1.6',
 });
 
+export const loadingSubText = style({
+  fontSize: '11px',
+  color: '#9CA3AF',
+});
+
+export const loadingSpeechBubble = style({
+  backgroundColor: '#FFFFFF',
+  border: '2.5px solid #1F2937',
+  borderRadius: '16px',
+  padding: '16px 20px',
+  fontSize: '13px',
+  fontWeight: 800,
+  boxShadow: '4px 4px 0px #1F2937',
+  lineHeight: '1.5',
+  maxWidth: '90%',
+});
+
+export const loadingSpeechHighlight = style({
+  color: '#7C3AED',
+});
+
+export const errorBox = style({
+  backgroundColor: '#FEE2E2',
+  border: '2.5px solid #1F2937',
+  borderRadius: '16px',
+  padding: '20px',
+  color: '#DC2626',
+  fontWeight: 800,
+  boxShadow: '4px 4px 0px #1F2937',
+  maxWidth: '90%',
+});
+
+export const errorBoxNote = style({
+  fontSize: '12px',
+  display: 'block',
+  marginTop: '8px',
+  color: '#6B7280',
+});
+
+export const resultHeader = style({
+  textAlign: 'center',
+  marginTop: '8px',
+});
+
+export const resultTitle = style({
+  fontSize: '20px',
+  fontWeight: 900,
+  color: '#1F2937',
+  marginTop: '12px',
+});
+
+export const summaryHighlight = style({
+  color: '#7C3AED',
+  display: 'block',
+  marginTop: '6px',
+});
+
+export const luckyTitle = style({
+  fontSize: '13px',
+  fontWeight: 900,
+  color: '#D97706',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  margin: '0',
+});
+
+export const adEmoji = style({
+  fontSize: '24px',
+  marginBottom: '4px',
+});
+
+export const adNote = style({
+  fontSize: '9px',
+  color: '#9CA3AF',
+  marginTop: '2px',
+});
+
 // 결과 본문 메인 컨테이너
 export const resultContainer = style({
   display: 'flex',
