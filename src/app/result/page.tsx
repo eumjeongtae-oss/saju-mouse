@@ -100,11 +100,23 @@ function ResultPageContent() {
   };
 
   // 카카오톡 공유하기 핸들러
-  const handleKakaoShare = () => {
-    if (typeof window === 'undefined' || !window.Kakao) {
-      alert('카카오톡 SDK가 아직 로드되지 않았어요. 잠시 후 다시 시도해 보세요.');
-      return;
+  const handleKakaoShare = async () => {
+    if (typeof window === 'undefined') return;
+
+    if (!window.Kakao) {
+      await new Promise<void>((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://developers.kakao.com/sdk/js/kakao.js';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Kakao SDK 로드 실패'));
+        document.head.appendChild(script);
+      }).catch(() => {
+        alert('카카오톡 SDK 로드에 실패했어요. 잠시 후 다시 시도해 보세요.');
+        return;
+      });
     }
+
+    if (!window.Kakao) return;
 
     if (!window.Kakao.isInitialized()) {
       window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY ?? '');
