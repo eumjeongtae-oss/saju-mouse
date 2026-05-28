@@ -6,6 +6,7 @@ import { useFortuneStore } from '@/stores/fortuneStore';
 import { useSajuMutation } from '@/hooks/mutations/useSajuMutation';
 import { useResultActions } from './_hooks/useResultActions';
 import { Mascot } from '@/components/Mascot';
+import { AdBanner } from '@/components/AdBanner';
 import { ResultLoading } from './_components/ResultLoading';
 import { ResultError } from './_components/ResultError';
 import { ResultExtras } from './_components/ResultExtras';
@@ -116,12 +117,20 @@ function ResultPageContent() {
         </div>
       )}
 
-      {/* 배너 광고 영역 */}
-      <div className={styles.adBanner}>
-        <span className={styles.adLabel}>AD</span>
-        <span className={styles.adEmoji}>🐹🧀</span>
-        <span className={styles.adText}>찍쥐에게 치즈를 후원하는 광고 협찬 영역이에요</span>
-        <span className={styles.adNote}>(여기에 애드센스 인피드/디스플레이 배너를 탑재할 수 있어요 찍)</span>
+      {/* SNS 공유 */}
+      <div className={styles.shareSection}>
+        <h4 className={styles.shareTitle}>📢 이 좋은 운세를 친구들에게 널리 공유해 보세요</h4>
+        <div className={styles.shareButtonGroup}>
+          <button className={styles.shareKakao} onClick={handleKakaoShare}>
+            💛 카카오톡 공유
+          </button>
+          <button className={styles.shareLink} onClick={handleCopyLink}>
+            🔗 링크 주소 복사
+          </button>
+        </div>
+        <button className={styles.captureButton} onClick={handleCapture} disabled={isCapturing}>
+          {isCapturing ? '📸 캡처 중...' : '📸 결과 이미지로 저장'}
+        </button>
       </div>
 
       {/* 상세 풀이 */}
@@ -164,22 +173,6 @@ function ResultPageContent() {
         </div>
       </div>
 
-      {/* SNS 공유 */}
-      <div className={styles.shareSection}>
-        <h4 className={styles.shareTitle}>📢 이 좋은 운세를 친구들에게 널리 공유해 보세요</h4>
-        <div className={styles.shareButtonGroup}>
-          <button className={styles.shareKakao} onClick={handleKakaoShare}>
-            💛 카카오톡 공유
-          </button>
-          <button className={styles.shareLink} onClick={handleCopyLink}>
-            🔗 링크 주소 복사
-          </button>
-        </div>
-        <button className={styles.captureButton} onClick={handleCapture} disabled={isCapturing}>
-          {isCapturing ? '📸 캡처 중...' : '📸 결과 이미지로 저장'}
-        </button>
-      </div>
-
       {/* 커피 후원 */}
       <div className={styles.coffeeSection}>
         <p className={styles.coffeeTitle}>☕ 찍쥐에게 커피 한 잔 사줄래요?</p>
@@ -194,6 +187,12 @@ function ResultPageContent() {
             복사
           </button>
         </div>
+      </div>
+
+      {/* 배너 광고 영역 */}
+      <div className={styles.adBanner}>
+        <span className={styles.adLabel}>AD</span>
+        <AdBanner />
       </div>
 
       {/* 다시 운세 보기 */}

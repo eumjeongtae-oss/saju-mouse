@@ -1,4 +1,5 @@
 import { Mascot } from '@/components/Mascot';
+import { AdBanner } from '@/components/AdBanner';
 import * as styles from '../page.css';
 
 export function ResultLoading() {
@@ -22,9 +23,7 @@ export function ResultLoading() {
 
       <div className={styles.adBanner}>
         <span className={styles.adLabel}>AD</span>
-        <span className={styles.adEmoji}>🐹🧀</span>
-        <span className={styles.adText}>찍쥐에게 치즈를 후원하는 광고 협찬 영역이에요</span>
-        <span className={styles.adNote}>(실제 구글 애드센스 Google AdSense 가 렌더링될 영역)</span>
+        <AdBanner />
       </div>
     </div>
   );
