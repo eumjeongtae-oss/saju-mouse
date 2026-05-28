@@ -5,7 +5,10 @@ import { Providers } from './providers';
 import { Logo } from '@/components/Logo';
 import * as styles from './layout.css';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3001';
+// Vercel 환경에서 환경변수가 없더라도 배포 도메인이 정상적으로 들어가도록 처리합니다.
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.includes('localhost') 
+  ? 'https://saju-mouse.vercel.app' 
+  : (process.env.NEXT_PUBLIC_SITE_URL || 'https://saju-mouse.vercel.app');
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
