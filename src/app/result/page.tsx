@@ -106,7 +106,7 @@ function ResultPageContent() {
     if (!window.Kakao) {
       await new Promise<void>((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = 'https://developers.kakao.com/sdk/js/kakao.js';
+        script.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js'; // 최신 v2 SDK 적용
         script.onload = () => resolve();
         script.onerror = () => reject(new Error('Kakao SDK 로드 실패'));
         document.head.appendChild(script);
@@ -127,9 +127,12 @@ function ResultPageContent() {
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
-        title: '찍쥐가 제 운세를 밝혀냈어요',
-        description: data?.summary ?? '찍쥐의 명쾌한 사주 풀이를 확인해 보세요',
-        imageUrl: `${siteUrl}/og-image.png`,
+        title: '찍쥐 - AI 사주 운세',
+        description: '찍쥐가 당신의 사주팔자와 운세를 명쾌하게 풀어드려요!',
+        // 로컬 환경에서는 카카오 서버가 접근할 수 없으므로 기본 로고 노출, 실서버에서는 og-image 사용
+        imageUrl: siteUrl.includes('localhost')
+          ? 'https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png'
+          : `${siteUrl}/og-image.png`,
         link: {
           mobileWebUrl: siteUrl,
           webUrl: siteUrl,
@@ -137,7 +140,7 @@ function ResultPageContent() {
       },
       buttons: [
         {
-          title: '나도 운세 보러 가기',
+          title: '운세 보러 가기',
           link: {
             mobileWebUrl: siteUrl,
             webUrl: siteUrl,
