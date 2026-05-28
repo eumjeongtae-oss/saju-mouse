@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 declare global {
   interface Window {
@@ -9,7 +9,12 @@ declare global {
 }
 
 export function AdBanner() {
+  const adRef = useRef<HTMLModElement>(null);
+
   useEffect(() => {
+    // data-adsbygoogle-status 속성이 이미 있으면 AdSense가 초기화한 슬롯 — 중복 push 방지
+    if (adRef.current?.getAttribute('data-adsbygoogle-status')) return;
+
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch {
@@ -19,6 +24,7 @@ export function AdBanner() {
 
   return (
     <ins
+      ref={adRef}
       className="adsbygoogle"
       style={{ display: 'block' }}
       data-ad-client="ca-pub-9683506902844084"
