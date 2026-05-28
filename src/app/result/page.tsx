@@ -91,12 +91,11 @@ function ResultPageContent() {
 
   // 링크 복사하기 핸들러
   const handleCopyLink = () => {
-    if (typeof window !== 'undefined') {
-      navigator.clipboard.writeText(window.location.origin).then(() => {
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 2000);
-      });
-    }
+    const url = process.env.NEXT_PUBLIC_SITE_URL ?? window.location.origin;
+    navigator.clipboard.writeText(url).then(() => {
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
+    });
   };
 
   // 카카오톡 공유하기 핸들러

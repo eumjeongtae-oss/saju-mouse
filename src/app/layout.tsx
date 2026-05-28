@@ -5,7 +5,7 @@ import { Providers } from './providers';
 import { Logo } from '@/components/Logo';
 import * as styles from './layout.css';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3001';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -17,6 +17,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: '/kakaotalk-profile.png',
+        width: 1024,
+        height: 1024,
         alt: '찍찍사주 미리보기',
       },
     ],
