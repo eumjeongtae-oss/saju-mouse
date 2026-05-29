@@ -172,6 +172,40 @@ export const cardLove = style({
   },
 });
 
+export const cardCompatibility = style({
+  backgroundColor: '#FFF0F6', // 딥 핑크 파스텔
+  selectors: {
+    '&:hover': {
+      backgroundColor: '#FFE4EE',
+    },
+  },
+});
+
+// 궁합 카드 전체 너비 레이아웃
+export const cardCompatibilityFull = style({
+  width: '100%',
+  flexDirection: 'row',
+  alignItems: 'center',
+  minHeight: '80px',
+  gap: '16px',
+});
+
+// 궁합 카드 우측 뱃지
+export const cardCompatibilityBadge = style({
+  marginLeft: 'auto',
+  backgroundColor: '#EC4899',
+  color: '#FFFFFF',
+  borderWidth: '2px',
+  borderStyle: 'solid',
+  borderColor: '#1F2937',
+  borderRadius: '20px',
+  padding: '4px 12px',
+  fontSize: '11px',
+  fontWeight: 800,
+  whiteSpace: 'nowrap',
+  flexShrink: 0,
+});
+
 // 카드 내의 내용 스타일들
 export const cardIcon = style({
   fontSize: '28px',

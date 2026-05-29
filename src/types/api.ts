@@ -12,7 +12,7 @@ export interface ApiError {
 }
 
 // 운세 테마
-export type FortuneTheme = 'general' | 'yearly' | 'wealth' | 'love';
+export type FortuneTheme = 'general' | 'yearly' | 'wealth' | 'love' | 'compatibility';
 
 // 양력/음력
 export type CalendarType = 'solar' | 'lunar';
@@ -58,6 +58,11 @@ export interface SajuReadingExtras {
   compatibleTraits?: string[];
   incompatibleTraits?: string[];
   bestPeriod?: string;
+  // compatibility
+  compatibilityScore?: number;
+  coupleType?: string;
+  synergyPoint?: string;
+  advice?: string;
   // shared
   luckyColor?: string;
   luckyItem?: string;
@@ -78,4 +83,5 @@ export interface SajuReading {
 export interface SajuReadingRequest {
   theme: FortuneTheme;
   input: SajuInput;
+  partnerInput?: SajuInput;
 }

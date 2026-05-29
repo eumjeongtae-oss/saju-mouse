@@ -220,6 +220,72 @@ export const submitButton = style({
   },
 });
 
+// 핑크 액센트 활성 세그먼트 (궁합 상대방 패널용)
+export const segmentActivePink = style({
+  backgroundColor: '#FFF0F6',
+  color: '#EC4899',
+  borderColor: '#EC4899',
+  boxShadow: '3px 3px 0px #EC4899',
+  fontWeight: 800,
+
+  selectors: {
+    '&:hover': {
+      backgroundColor: '#FFE4EE',
+      transform: 'translateY(-1px)',
+      boxShadow: '4px 4px 0px #EC4899',
+    },
+  },
+});
+
+// 궁합 모드 — 두 패널 나란히 배치
+export const compatibilityPanels = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '12px',
+  width: '100%',
+});
+
+// VS 구분선
+export const compatibilityDivider = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+export const compatibilityVs = style({
+  fontSize: '24px',
+  lineHeight: '1',
+});
+
+// 궁합 개인 패널 컨테이너
+export const personPanel = style({
+  borderWidth: '2.5px',
+  borderStyle: 'solid',
+  borderRadius: vars.radii.lg,
+  overflow: 'hidden',
+  boxShadow: '4px 4px 0px #1F2937',
+});
+
+export const personPanelHeader = style({
+  padding: '10px 16px',
+  borderBottomWidth: '2.5px',
+  borderBottomStyle: 'solid',
+});
+
+export const personPanelLabel = style({
+  fontSize: vars.fontSizes.sm,
+  fontWeight: 900,
+  letterSpacing: '-0.01em',
+});
+
+export const personPanelBody = style({
+  padding: '16px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
+  backgroundColor: '#FFFFFF',
+});
+
 // 뒤로 가기 링크 버튼
 export const backButton = style({
   width: '100%',

@@ -61,6 +61,15 @@ export default function HomePage() {
     },
   ];
 
+  const compatibilityCard: ThemeCardData = {
+    id: 'compatibility',
+    pose: 'compatibility',
+    emoji: '💑',
+    title: '연인 궁합',
+    description: '두 사람의 사주로 보는 천생연분 궁합 분석',
+    styleClass: styles.cardCompatibility,
+  };
+
   // 포즈별 하찮은 말풍선 대사 정의
   const getSpeechText = (pose: MascotPose): React.ReactNode => {
     switch (pose) {
@@ -90,6 +99,13 @@ export default function HomePage() {
           <>
             양 볼이 발개지도록 설레는 기운 <br />
             <span className={styles.speechBubbleHighlight}>연애·대인관계</span>의 신비
+          </>
+        );
+      case 'compatibility':
+        return (
+          <>
+            두 사주를 맞대면 천생연분인지 알 수 있어요 <br />
+            <span className={styles.speechBubbleHighlight}>연인 궁합</span> 바로 보러 가요 💑
           </>
         );
       case 'idle':
@@ -136,9 +152,23 @@ export default function HomePage() {
               <h3 className={styles.cardTitle}>{card.title}</h3>
               <p className={styles.cardDesc}>{card.description}</p>
             </div>
-            {/* <div className={styles.cardArrow}>→</div> */}
           </div>
         ))}
+      </div>
+
+      {/* 연인 궁합 — 전체 너비 풀카드 */}
+      <div
+        className={`${styles.card} ${styles.cardCompatibility} ${styles.cardCompatibilityFull}`}
+        onMouseEnter={() => setActivePose(compatibilityCard.pose)}
+        onMouseLeave={() => setActivePose('idle')}
+        onClick={() => handleCardClick(compatibilityCard.id)}
+      >
+        <div className={styles.cardIcon}>{compatibilityCard.emoji}</div>
+        <div className={styles.cardContent}>
+          <h3 className={styles.cardTitle}>{compatibilityCard.title}</h3>
+          <p className={styles.cardDesc}>{compatibilityCard.description}</p>
+        </div>
+        {/* <div className={styles.cardCompatibilityBadge}>두 사람 입력</div> */}
       </div>
     </div>
   );

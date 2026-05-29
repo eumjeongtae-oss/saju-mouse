@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export type MascotPose = 'idle' | 'general' | 'yearly' | 'wealth' | 'love';
+export type MascotPose = 'idle' | 'general' | 'yearly' | 'wealth' | 'love' | 'compatibility';
 
 interface MascotProps {
   pose: MascotPose;
@@ -64,6 +64,20 @@ export const Mascot: React.FC<MascotProps> = ({ pose, className, size = 160 }) =
             @keyframes tailWag {
               0%, 100% { transform: rotate(0deg); }
               50% { transform: rotate(15deg); }
+            }
+            @keyframes floatHeartLeft {
+              0%, 100% { transform: translateY(0px) rotate(-12deg); }
+              50% { transform: translateY(-8px) rotate(-12deg); }
+            }
+            @keyframes floatHeartRight {
+              0%, 100% { transform: translateY(0px) rotate(12deg); }
+              50% { transform: translateY(-6px) rotate(12deg); }
+            }
+            .heart-float-left {
+              animation: floatHeartLeft 2.8s ease-in-out infinite;
+            }
+            .heart-float-right {
+              animation: floatHeartRight 3.2s ease-in-out infinite;
             }
 
             .ear-left {
@@ -255,6 +269,61 @@ export const Mascot: React.FC<MascotProps> = ({ pose, className, size = 160 }) =
 
               {/* 돈 냄새를 맡고 흐르는 땀 한 방울 */}
               <path d="M124 88C127 88 128 92 125 94C123 96 121 93 121 91C121 89 122 88 124 88Z" fill="#60A5FA" />
+            </>
+          )}
+
+          {pose === 'compatibility' && (
+            <>
+              {/* 눈 - 반짝이는 별 눈 ★★ */}
+              <text x="58" y="95" fontSize="14" textAnchor="middle" fill="#EC4899" fontWeight="900">★</text>
+              <text x="102" y="95" fontSize="14" textAnchor="middle" fill="#EC4899" fontWeight="900">★</text>
+              {/* 입 - 만족스러운 큰 웃음 */}
+              <path d="M72 103Q80 110 88 103" stroke="#1F2937" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+
+              {/* 볼터치 */}
+              <circle cx="56" cy="99" r="7" fill="#F9A8D4" fillOpacity="0.85" />
+              <circle cx="104" cy="99" r="7" fill="#F9A8D4" fillOpacity="0.85" />
+
+              {/* 왼쪽 둥둥 하트 */}
+              <g className="heart-float-left" transform="translate(22, 68)">
+                <path
+                  d="M0 -6C-4 -11 -11 -7 -7 -1L0 5L7 -1C11 -7 4 -11 0 -6Z"
+                  fill="#F472B6"
+                  stroke="#1F2937"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                />
+              </g>
+              {/* 오른쪽 둥둥 하트 */}
+              <g className="heart-float-right" transform="translate(138, 62)">
+                <path
+                  d="M0 -8C-6 -14 -14 -9 -10 -2L0 6L10 -2C14 -9 6 -14 0 -8Z"
+                  fill="#F43F5E"
+                  stroke="#1F2937"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                />
+              </g>
+
+              {/* 머리 위 두 손가락 하트 표시 */}
+              <g transform="translate(80, 53)">
+                {/* 작은 하트 왼쪽 */}
+                <path
+                  d="M-10 -4C-13 -8 -18 -5 -15 -1L-10 3L-5 -1C-2 -5 -7 -8 -10 -4Z"
+                  fill="#FCA5A5"
+                  stroke="#1F2937"
+                  strokeWidth="1.8"
+                  strokeLinejoin="round"
+                />
+                {/* 작은 하트 오른쪽 */}
+                <path
+                  d="M10 -4C7 -8 2 -5 5 -1L10 3L15 -1C18 -5 13 -8 10 -4Z"
+                  fill="#FCA5A5"
+                  stroke="#1F2937"
+                  strokeWidth="1.8"
+                  strokeLinejoin="round"
+                />
+              </g>
             </>
           )}
 

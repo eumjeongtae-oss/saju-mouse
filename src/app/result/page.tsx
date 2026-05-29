@@ -25,7 +25,7 @@ const PILLAR_KEYS = [
 function ResultPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { selectedTheme, sajuInput, setTheme, setSajuInput, reset } = useFortuneStore();
+  const { selectedTheme, sajuInput, partnerInput, setTheme, setSajuInput, setPartnerInput, reset } = useFortuneStore();
   const { mutate, data, isPending, isError } = useSajuMutation();
   const {
     showToast,
@@ -40,13 +40,15 @@ function ResultPageContent() {
 
   const initialThemeRef = useRef(selectedTheme);
   const initialInputRef = useRef(sajuInput);
+  const initialPartnerInputRef = useRef(partnerInput);
 
   useEffect(() => {
     const theme = initialThemeRef.current;
     const input = initialInputRef.current;
+    const pInput = initialPartnerInputRef.current;
 
     if (theme && input) {
-      mutate({ theme, input });
+      mutate({ theme, input, partnerInput: pInput || undefined });
       return;
     }
 
@@ -58,7 +60,10 @@ function ResultPageContent() {
 
     setTheme(decoded.theme);
     setSajuInput(decoded.input);
-    mutate({ theme: decoded.theme, input: decoded.input });
+    if (decoded.partnerInput) {
+      setPartnerInput(decoded.partnerInput);
+    }
+    mutate({ theme: decoded.theme, input: decoded.input, partnerInput: decoded.partnerInput });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -22,10 +22,12 @@ function isSajuInput(value: unknown): value is SajuInput {
 function isSajuReadingRequest(value: unknown): value is SajuReadingRequest {
   if (typeof value !== 'object' || value === null) return false;
   const v = value as Record<string, unknown>;
-  return (
-    ['general', 'yearly', 'wealth', 'love'].includes(v.theme as string) &&
-    isSajuInput(v.input)
-  );
+  const isValidTheme = ['general', 'yearly', 'wealth', 'love', 'compatibility'].includes(v.theme as string);
+  const hasValidInput = isSajuInput(v.input);
+  if (v.theme === 'compatibility') {
+    return isValidTheme && hasValidInput && isSajuInput(v.partnerInput);
+  }
+  return isValidTheme && hasValidInput;
 }
 
 // ─── 음력 → 양력 변환 ─────────────────────────────────────────────────────────
@@ -47,6 +49,7 @@ const THEME_LABELS: Record<FortuneTheme, string> = {
   yearly: `${new Date().getFullYear()}년 올해 신수 분석`,
   wealth: '재물운 및 학업/취업운 분석',
   love: '연애운 및 대인관계 분석',
+  compatibility: '두 사람의 사주 궁합 분석',
 };
 
 const THEME_SECTION_TITLES: Record<FortuneTheme, string[]> = {
@@ -60,7 +63,7 @@ const THEME_SECTION_TITLES: Record<FortuneTheme, string[]> = {
     '🌊 올해 에너지 총평 — 상반기 vs 하반기 대비',
     '⏳ 이미 지나온 달들, 당신이 느꼈을 흐름',
     '🎯 남은 기간, 반드시 잡아야 할 기회와 타이밍',
-    '🚨 경계해야 할 시기와 그때 써야 할 처세술',
+    '🚨 경계해야 시기와 그때 써야 할 처세술',
   ],
   wealth: [
     '💰 내 재물 그릇 — 타고난 돈과의 관계',
@@ -73,6 +76,12 @@ const THEME_SECTION_TITLES: Record<FortuneTheme, string[]> = {
     '✨ 나와 찰떡인 이성 — 구체적인 성격과 에너지',
     '⚠️ 절대 피해야 할 이성 유형과 반복되는 문제',
     '📅 현재 연애운 흐름과 인연이 찾아오는 시기',
+  ],
+  compatibility: [
+    '👩‍❤️‍👨 우리 커플의 본질적인 인연과 상호작용',
+    '🔍 서로가 서로에게 강렬하게 끌리는 이유',
+    '⚠️ 두 사람이 부딪히기 쉬운 부분과 현명한 대처법',
+    '💍 결혼과 미래를 향한 인연 흐름, 그리고 조언',
   ],
 };
 
@@ -127,6 +136,19 @@ extras.bestPeriod: 인연이 찾아오는 시기 표현
 extras.luckyColor: 연애운을 높이는 색상명
 extras.luckyItem: 연애운을 높이는 물건 또는 음식
   `.trim(),
+
+  compatibility: `
+섹션 ①: 두 사람의 일간(태어난 날의 기운)을 비교하여 어떤 형태의 관계인지 명확히 진단하고, 서로가 만나면 어떤 시너지가 발생하는지 서술
+섹션 ②: 내담자(나)의 어떤 점이 상대방(상대)을 채워주고, 상대방의 어떤 점이 나를 이끄는지 구체적인 성향과 태도로 분석
+섹션 ③: 두 사람의 기운이 부딪힐 수 있는 구체적인 갈등 포인트(예: 의사소통 방식, 감정 표현, 소비 습관 등)를 쉽게 설명해주고, 이를 극복하기 위한 따뜻하고 건설적인 대처법 제시 (부정적 단언 최소화, 긍정적이고 희망찬 톤 유지)
+섹션 ④: 현재 운기에서 두 사람의 인연 흐름을 짚어보고, 연애를 넘어 결혼이나 평생의 동반자로 발전할 가능성과 서로 노력해야 할 점을 조언
+extras.compatibilityScore: 1~100 사이의 숫자 (정수)
+extras.coupleType: 두 사람의 관계를 정의하는 짧고 임팩트 있는 표현 (예: "서로의 부족함을 완벽히 채우는 소울메이트")
+extras.synergyPoint: 두 사람이 함께할 때 생기는 긍정적인 효과 한 줄 요약
+extras.advice: 예쁜 사랑을 위해 명심해야 할 조언 한 줄 요약
+extras.luckyColor: 두 사람 모두에게 좋은 에너지를 주는 컬러명
+extras.luckyItem: 데이트할 때 행운을 가져다주는 아이템이나 장소
+  `.trim(),
 };
 
 // 테마별 extras JSON 스키마 힌트 (LLM이 정확한 구조로 응답하도록 유도)
@@ -135,9 +157,10 @@ const EXTRAS_SCHEMA: Record<FortuneTheme, string> = {
   yearly: `"extras": { "bestMonth": "N월", "worstMonth": "N월", "keyAction": "기회 행동 한 문장", "luckyColor": "색상명", "luckyItem": "아이템명" }`,
   wealth: `"extras": { "moneyType": "재물 유형", "topFields": ["분야1", "분야2", "분야3"], "warningHabit": "낭비 패턴 한 문장", "luckyColor": "색상명", "luckyItem": "아이템명" }`,
   love: `"extras": { "loveStyle": "연애 유형", "compatibleTraits": ["특징1", "특징2", "특징3"], "incompatibleTraits": ["특징1", "특징2"], "bestPeriod": "인연 시기", "luckyColor": "색상명", "luckyItem": "아이템명" }`,
+  compatibility: `"extras": { "compatibilityScore": 95, "coupleType": "커플 유형", "synergyPoint": "시너지 포인트 한 문장", "advice": "조언 한 문장", "luckyColor": "색상명", "luckyItem": "아이템명" }`,
 };
 
-function buildPrompt(theme: FortuneTheme, input: SajuInput, chart: SajuChart): string {
+function buildPrompt(theme: FortuneTheme, input: SajuInput, chart: SajuChart, partnerInput?: SajuInput, partnerChart?: SajuChart): string {
   const genderKo = input.gender === 'male' ? '남성' : '여성';
   const hourText = chart.hourPillar
     ? `${chart.hourPillar.stem}${chart.hourPillar.branch}`
@@ -147,25 +170,47 @@ function buildPrompt(theme: FortuneTheme, input: SajuInput, chart: SajuChart): s
   const currentMonth = now.getMonth() + 1;
   const sectionTitles = THEME_SECTION_TITLES[theme];
 
+  let partnerSection = '';
+  if (theme === 'compatibility' && partnerInput && partnerChart) {
+    const partnerGenderKo = partnerInput.gender === 'male' ? '남성' : '여성';
+    const partnerHourText = partnerChart.hourPillar
+      ? `${partnerChart.hourPillar.stem}${partnerChart.hourPillar.branch}`
+      : '미상(시간 불명)';
+    partnerSection = `
+[상대방 정보]
+성별: ${partnerGenderKo}
+출생년도: ${partnerInput.birthYear}년
+
+[상대방 사주 명식 - 천간지지 (원국)]
+년주: ${partnerChart.yearPillar.stem}${partnerChart.yearPillar.branch}
+월주: ${partnerChart.monthPillar.stem}${partnerChart.monthPillar.branch}
+일주: ${partnerChart.dayPillar.stem}${partnerChart.dayPillar.branch}  ← 일간(${partnerChart.dayPillar.stem})이 상대방의 핵심 기질입니다
+시주: ${partnerHourText}
+`;
+  }
+
   return `당신은 명리학에 깊은 지식을 가진 현대적이고 트렌디한 사주 전문가입니다.
 아래 사주 명식 데이터를 바탕으로 ${THEME_LABELS[theme]}을 진행해 주세요.
 
-[사주 명식 - 천간지지 (원국)]
+[내담자(나) 정보]
+성별: ${genderKo}
+출생년도: ${input.birthYear}년
+
+[내담자(나) 사주 명식 - 천간지지 (원국)]
 년주: ${chart.yearPillar.stem}${chart.yearPillar.branch}
 월주: ${chart.monthPillar.stem}${chart.monthPillar.branch}
 일주: ${chart.dayPillar.stem}${chart.dayPillar.branch}  ← 일간(${chart.dayPillar.stem})이 이 사람의 핵심 기질입니다
 시주: ${hourText}
-
-[내담자 정보]
-성별: ${genderKo}
-출생년도: ${input.birthYear}년
-현재 기준: ${currentYear}년 ${currentMonth}월
+${partnerSection}
+[현재 기준]
+${currentYear}년 ${currentMonth}월
 
 [섹션별 작성 지침 — 반드시 준수]
 ${THEME_DIRECTIVES[theme]}
 
 [문체 및 표현 규칙]
 - 타겟 독자: 학생, 대학생, 취준생, 사회초년생, 직장인들이 깊이 공감할 수 있는 세련된 존댓말
+- 한자를 사용할 경우 반드시 바로 뒤에 괄호로 발음 표기 — 예: 甲(갑), 乙(을), 木(목), 火(화)
 - 낡은 명리학 한자어(비견·겁재·편인 등)는 풀어서 쓰거나 배제
 - 유치한 신조어나 밈은 쓰지 말고 진정성 있는 컨설턴트 톤으로
 - 이모지(🌟 🎯 💸 📝 등)를 문맥에 맞게 자연스럽게 2~3개 사용
@@ -255,6 +300,23 @@ export async function POST(req: NextRequest) {
     // 2. 만세력 계산 (천간지지 4주)
     const chart = calculateSajuChart(solarYear, solarMonth, solarDay, input.birthHour);
 
+    let partnerChart: SajuChart | undefined = undefined;
+    const reqBody = body as SajuReadingRequest;
+    if (theme === 'compatibility' && reqBody.partnerInput) {
+      const pInput = reqBody.partnerInput;
+      let pSolarYear = pInput.birthYear;
+      let pSolarMonth = pInput.birthMonth;
+      let pSolarDay = pInput.birthDay;
+
+      if (pInput.calendarType === 'lunar') {
+        const solar = toSolarDate(pInput.birthYear, pInput.birthMonth, pInput.birthDay);
+        pSolarYear = solar.year;
+        pSolarMonth = solar.month;
+        pSolarDay = solar.day;
+      }
+      partnerChart = calculateSajuChart(pSolarYear, pSolarMonth, pSolarDay, pInput.birthHour);
+    }
+
     // 3. Gemini API 호출
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -265,7 +327,7 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const prompt = buildPrompt(theme, input, chart);
+    const prompt = buildPrompt(theme, input, chart, reqBody.partnerInput, partnerChart);
 
     console.log(`[API] Gemini 호출 시작 - 테마: ${theme}, 모델 후보:`, ['gemini-2.5-flash-lite']);
 

@@ -11,6 +11,7 @@ const EXTRAS_TITLE: Record<FortuneTheme, string> = {
   yearly: '📅 이달의 주목 포인트',
   wealth: '💎 재물 핵심 요약',
   love: '💝 연애 핵심 요약',
+  compatibility: '💞 두 사람의 궁합 요약',
 };
 
 export function ResultExtras({ theme, extras }: Props) {
@@ -140,6 +141,34 @@ export function ResultExtras({ theme, extras }: Props) {
             <div>
               <div className={styles.extrasInfoLabel}>📅 인연이 찾아오는 시기</div>
               <div className={styles.extrasInfoValue}>{extras.bestPeriod}</div>
+            </div>
+          )}
+        </>
+      )}
+      {theme === 'compatibility' && (
+        <>
+          {extras.coupleType && (
+            <div>
+              <div className={styles.extrasInfoLabel}>👩‍❤️‍👨 우리 커플의 유형은?</div>
+              <div className={styles.extrasInfoValue}>{extras.coupleType}</div>
+            </div>
+          )}
+          {extras.compatibilityScore !== undefined && (
+            <div>
+              <div className={styles.extrasInfoLabel}>💯 궁합 점수</div>
+              <div className={styles.extrasInfoValue}>{extras.compatibilityScore}점</div>
+            </div>
+          )}
+          {extras.synergyPoint && (
+            <div>
+              <div className={styles.extrasInfoLabel}>✨ 두 사람이 만났을 때 생기는 시너지</div>
+              <div className={styles.extrasInfoValue}>{extras.synergyPoint}</div>
+            </div>
+          )}
+          {extras.advice && (
+            <div>
+              <div className={styles.extrasInfoLabel}>💡 예쁜 사랑을 위한 조언</div>
+              <div className={styles.extrasInfoValue}>{extras.advice}</div>
             </div>
           )}
         </>
