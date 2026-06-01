@@ -6,7 +6,7 @@ export function ResultLoading() {
   return (
     <div className={styles.loadingContainer}>
       <div className={styles.loadingMascotWrapper}>
-        <Mascot pose="general" size={150} />
+        <Mascot pose="running" size={160} />
         <span className={styles.sweat}>💦</span>
       </div>
 

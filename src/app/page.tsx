@@ -6,7 +6,9 @@ import { useFortuneStore } from '@/stores/fortuneStore';
 import { Mascot, MascotPose } from '@/components/Mascot';
 import { FortuneTheme } from '@/types/api';
 import { getGanzhiYear } from '@/utils/format';
+import { AdBanner } from '@/components/AdBanner';
 import * as styles from './page.css';
+import { adBanner, adLabel } from '@/app/result/page.css';
 
 interface ThemeCardData {
   id: FortuneTheme;
@@ -156,6 +158,7 @@ export default function HomePage() {
         ))}
       </div>
 
+
       {/* 연인 궁합 — 전체 너비 풀카드 */}
       <div
         className={`${styles.card} ${styles.cardCompatibility} ${styles.cardCompatibilityFull}`}
@@ -168,8 +171,13 @@ export default function HomePage() {
           <h3 className={styles.cardTitle}>{compatibilityCard.title}</h3>
           <p className={styles.cardDesc}>{compatibilityCard.description}</p>
         </div>
-        {/* <div className={styles.cardCompatibilityBadge}>두 사람 입력</div> */}
+      </div>
+
+      <div className={adBanner}>
+        <span className={adLabel}>AD</span>
+        <AdBanner />
       </div>
     </div>
   );
 }
+

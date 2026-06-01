@@ -4,6 +4,8 @@ import { Mascot } from '@/components/Mascot';
 import { Gender, CalendarType } from '@/types/api';
 import { PersonInputPanel } from './_components/PersonInputPanel';
 import { useInputForm } from './_hooks/useInputForm';
+import { AdBanner } from '@/components/AdBanner';
+import { adBanner, adLabel } from '@/app/result/page.css';
 import * as styles from './page.css';
 
 export default function InputPage() {
@@ -69,6 +71,11 @@ export default function InputPage() {
             ← 처음으로 돌아가기
           </button>
         </form>
+
+        <div className={adBanner}>
+          <span className={adLabel}>AD</span>
+          <AdBanner />
+        </div>
       </div>
     );
   }
@@ -172,6 +179,11 @@ export default function InputPage() {
           ← 처음으로 돌아가기
         </button>
       </form>
+
+      <div className={adBanner}>
+        <span className={adLabel}>AD</span>
+        <AdBanner />
+      </div>
     </div>
   );
 }

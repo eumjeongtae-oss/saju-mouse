@@ -35,7 +35,7 @@ export const loadingMascotWrapper = style({
 export const sweat = style({
   position: 'absolute',
   top: '30px',
-  right: '25px',
+  left: '25px',
   fontSize: '20px',
   animation: `${sweatDrop} 1.2s ease-in-out infinite`,
 });

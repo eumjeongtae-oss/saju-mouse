@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export type MascotPose = 'idle' | 'general' | 'yearly' | 'wealth' | 'love' | 'compatibility';
+export type MascotPose = 'idle' | 'general' | 'yearly' | 'wealth' | 'love' | 'compatibility' | 'running';
 
 interface MascotProps {
   pose: MascotPose;
@@ -108,6 +108,30 @@ export const Mascot: React.FC<MascotProps> = ({ pose, className, size = 160 }) =
               transform-origin: 35px 125px;
               animation: tailWag 2.5s ease-in-out infinite;
             }
+            @keyframes runBounce {
+              0%, 100% { transform: translateY(0px); }
+              50% { transform: translateY(-4px); }
+            }
+            .mascot-run-bounce {
+              animation: runBounce 0.3s ease-in-out infinite;
+              transform-origin: center;
+            }
+            @keyframes runFootLeft {
+              0%, 100% { transform: translateY(0px) rotate(0deg); }
+              50% { transform: translateY(-8px) rotate(-15deg); }
+            }
+            @keyframes runFootRight {
+              0%, 100% { transform: translateY(-8px) rotate(-15deg); }
+              50% { transform: translateY(0px) rotate(0deg); }
+            }
+            .run-foot-left {
+              animation: runFootLeft 0.3s ease-in-out infinite;
+              transform-origin: 55px 130px;
+            }
+            .run-foot-right {
+              animation: runFootRight 0.3s ease-in-out infinite;
+              transform-origin: 105px 130px;
+            }
           `}</style>
 
           {/* 그라데이션 정의 */}
@@ -127,8 +151,8 @@ export const Mascot: React.FC<MascotProps> = ({ pose, className, size = 160 }) =
         {/* 1. 하찮은 바닥 그림자 */}
         <ellipse cx="80" cy="132" rx="42" ry="7" fill="#E5E7EB" />
 
-        {/* 메인 쥐 그룹 (둥둥 떠다님) */}
-        <g className="mascot-body-group">
+        {/* 메인 쥐 그룹 (둥둥 떠다님 혹은 뜀박질) */}
+        <g className={pose === 'running' ? "mascot-run-bounce" : "mascot-body-group"}>
           {/* 2. 꼬리 */}
           <path
             className="mouse-tail"
@@ -159,8 +183,12 @@ export const Mascot: React.FC<MascotProps> = ({ pose, className, size = 160 }) =
           />
 
           {/* 5. 하찮은 짧은 발 */}
-          <circle cx="55" cy="130" r="6" fill="#E5E7EB" stroke="#1F2937" strokeWidth="2.5" />
-          <circle cx="105" cy="130" r="6" fill="#E5E7EB" stroke="#1F2937" strokeWidth="2.5" />
+          <g className={pose === 'running' ? "run-foot-left" : ""}>
+            <circle cx="55" cy="130" r="6" fill="#E5E7EB" stroke="#1F2937" strokeWidth="2.5" />
+          </g>
+          <g className={pose === 'running' ? "run-foot-right" : ""}>
+            <circle cx="105" cy="130" r="6" fill="#E5E7EB" stroke="#1F2937" strokeWidth="2.5" />
+          </g>
 
           {/* 6. 발그레 볼터치 */}
           <circle cx="56" cy="99" r="6" fill="#FFA5D2" fillOpacity="0.75" />
@@ -350,6 +378,17 @@ export const Mascot: React.FC<MascotProps> = ({ pose, className, size = 160 }) =
                   strokeLinejoin="round"
                 />
               </g>
+            </>
+          )}
+
+          {pose === 'running' && (
+            <>
+              {/* 눈 - > < */}
+              <path d="M58 85L68 91L58 97" stroke="#1F2937" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              <path d="M102 85L92 91L102 97" stroke="#1F2937" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+              {/* 입 - 헥헥거리는 혓바닥 */}
+              <path d="M74 102C76 105 84 105 86 102" stroke="#1F2937" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+              <path d="M76 103C76 109 84 109 84 103Z" fill="#F87171" stroke="#1F2937" strokeWidth="1.5" />
             </>
           )}
         </g>

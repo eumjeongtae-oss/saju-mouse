@@ -181,6 +181,7 @@ export const cardCompatibility = style({
   },
 });
 
+
 // 궁합 카드 전체 너비 레이아웃
 export const cardCompatibilityFull = style({
   width: '100%',

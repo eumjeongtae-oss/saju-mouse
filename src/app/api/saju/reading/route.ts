@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, SchemaType, Schema, ObjectSchema } from '@google/generative-ai';
 import KoreanLunarCalendar from 'korean-lunar-calendar';
-import { calculateSajuChart } from '@/utils/saju';
+import { calculateSajuChart, analyzeSajuElements, getCurrentWoon, calculateDaewun } from '@/utils/saju';
 import type { FortuneTheme, SajuChart, SajuInput, SajuReading, SajuReadingExtras, SajuReadingRequest } from '@/types/api';
 
 // ─── 타입 가드 ────────────────────────────────────────────────────────────────
@@ -151,14 +151,86 @@ extras.luckyItem: 데이트할 때 행운을 가져다주는 아이템이나 장
   `.trim(),
 };
 
-// 테마별 extras JSON 스키마 힌트 (LLM이 정확한 구조로 응답하도록 유도)
-const EXTRAS_SCHEMA: Record<FortuneTheme, string> = {
-  general: `"extras": { "birthElement": "일간 한자 + 오행 의미", "careers": [{"name": "직업명", "reason": "이유 한 줄"}, {"name": "...", "reason": "..."}, {"name": "...", "reason": "..."}], "compatibleType": "잘 맞는 사람 한 문장", "incompatibleType": "피해야 할 사람 한 문장", "luckyColor": "색상명", "luckyItem": "아이템명" }`,
-  yearly: `"extras": { "bestMonth": "N월", "worstMonth": "N월", "keyAction": "기회 행동 한 문장", "luckyColor": "색상명", "luckyItem": "아이템명" }`,
-  wealth: `"extras": { "moneyType": "재물 유형", "topFields": ["분야1", "분야2", "분야3"], "warningHabit": "낭비 패턴 한 문장", "luckyColor": "색상명", "luckyItem": "아이템명" }`,
-  love: `"extras": { "loveStyle": "연애 유형", "compatibleTraits": ["특징1", "특징2", "특징3"], "incompatibleTraits": ["특징1", "특징2"], "bestPeriod": "인연 시기", "luckyColor": "색상명", "luckyItem": "아이템명" }`,
-  compatibility: `"extras": { "compatibilityScore": 95, "coupleType": "커플 유형", "synergyPoint": "시너지 포인트 한 문장", "advice": "조언 한 문장", "luckyColor": "색상명", "luckyItem": "아이템명" }`,
-};
+// 테마별 Gemini Structured Outputs 스키마 생성기
+function getResponseSchema(theme: FortuneTheme): Schema {
+  const baseSchema: Schema = {
+    type: SchemaType.OBJECT,
+    properties: {
+      summary: { type: SchemaType.STRING, description: "사주를 꿰뚫는 트렌디한 한줄 요약 (50자 이내)" },
+      keywords: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+      sections: {
+        type: SchemaType.ARRAY,
+        items: {
+          type: SchemaType.OBJECT,
+          properties: {
+            title: { type: SchemaType.STRING },
+            content: { type: SchemaType.STRING, description: "마크다운 없이 순수 텍스트로 작성" }
+          },
+          required: ["title", "content"]
+        }
+      },
+      extras: {
+        type: SchemaType.OBJECT,
+        properties: {},
+        required: []
+      }
+    },
+    required: ["summary", "keywords", "sections", "extras"]
+  };
+
+  const extrasSchema = baseSchema.properties!.extras as ObjectSchema;
+  const extrasProps = extrasSchema.properties!;
+  const extrasReq = extrasSchema.required!;
+
+  if (theme === 'general') {
+    extrasProps.birthElement = { type: SchemaType.STRING };
+    extrasProps.careers = {
+      type: SchemaType.ARRAY,
+      items: {
+        type: SchemaType.OBJECT,
+        properties: { name: { type: SchemaType.STRING }, reason: { type: SchemaType.STRING } },
+        required: ["name", "reason"]
+      }
+    };
+    extrasProps.compatibleType = { type: SchemaType.STRING };
+    extrasProps.incompatibleType = { type: SchemaType.STRING };
+    extrasProps.luckyColor = { type: SchemaType.STRING };
+    extrasProps.luckyItem = { type: SchemaType.STRING };
+    extrasReq.push("birthElement", "careers", "compatibleType", "incompatibleType", "luckyColor", "luckyItem");
+  } else if (theme === 'yearly') {
+    extrasProps.bestMonth = { type: SchemaType.STRING };
+    extrasProps.worstMonth = { type: SchemaType.STRING };
+    extrasProps.keyAction = { type: SchemaType.STRING };
+    extrasProps.luckyColor = { type: SchemaType.STRING };
+    extrasProps.luckyItem = { type: SchemaType.STRING };
+    extrasReq.push("bestMonth", "worstMonth", "keyAction", "luckyColor", "luckyItem");
+  } else if (theme === 'wealth') {
+    extrasProps.moneyType = { type: SchemaType.STRING };
+    extrasProps.topFields = { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } };
+    extrasProps.warningHabit = { type: SchemaType.STRING };
+    extrasProps.luckyColor = { type: SchemaType.STRING };
+    extrasProps.luckyItem = { type: SchemaType.STRING };
+    extrasReq.push("moneyType", "topFields", "warningHabit", "luckyColor", "luckyItem");
+  } else if (theme === 'love') {
+    extrasProps.loveStyle = { type: SchemaType.STRING };
+    extrasProps.compatibleTraits = { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } };
+    extrasProps.incompatibleTraits = { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } };
+    extrasProps.bestPeriod = { type: SchemaType.STRING };
+    extrasProps.luckyColor = { type: SchemaType.STRING };
+    extrasProps.luckyItem = { type: SchemaType.STRING };
+    extrasReq.push("loveStyle", "compatibleTraits", "incompatibleTraits", "bestPeriod", "luckyColor", "luckyItem");
+  } else if (theme === 'compatibility') {
+    extrasProps.compatibilityScore = { type: SchemaType.INTEGER };
+    extrasProps.coupleType = { type: SchemaType.STRING };
+    extrasProps.synergyPoint = { type: SchemaType.STRING };
+    extrasProps.advice = { type: SchemaType.STRING };
+    extrasProps.luckyColor = { type: SchemaType.STRING };
+    extrasProps.luckyItem = { type: SchemaType.STRING };
+    extrasReq.push("compatibilityScore", "coupleType", "synergyPoint", "advice", "luckyColor", "luckyItem");
+  }
+
+  return baseSchema;
+}
 
 function buildPrompt(theme: FortuneTheme, input: SajuInput, chart: SajuChart, partnerInput?: SajuInput, partnerChart?: SajuChart): string {
   const genderKo = input.gender === 'male' ? '남성' : '여성';
@@ -170,12 +242,28 @@ function buildPrompt(theme: FortuneTheme, input: SajuInput, chart: SajuChart, pa
   const currentMonth = now.getMonth() + 1;
   const sectionTitles = THEME_SECTION_TITLES[theme];
 
+  const { sewun, wolwun } = getCurrentWoon();
+  const daewun = calculateDaewun(input.birthYear, input.gender, chart.yearPillar.stem, chart.monthPillar.stem + chart.monthPillar.branch);
+  const elements = analyzeSajuElements(chart);
+
+  const elementStr = `[오행 및 십성 분석]
+오행 개수: 木(${elements.elementsCount['木']}) 火(${elements.elementsCount['火']}) 土(${elements.elementsCount['土']}) 金(${elements.elementsCount['金']}) 水(${elements.elementsCount['水']})
+년주: ${elements.details[0].stemElement}[${elements.details[0].stemTenGod}] / ${elements.details[0].branchElement}[${elements.details[0].branchTenGod}]
+월주: ${elements.details[1].stemElement}[${elements.details[1].stemTenGod}] / ${elements.details[1].branchElement}[${elements.details[1].branchTenGod}]
+일주(나): ${elements.details[2].stemElement}[일간] / ${elements.details[2].branchElement}[${elements.details[2].branchTenGod}]
+시주: ${elements.details[3] ? `${elements.details[3].stemElement}[${elements.details[3].stemTenGod}] / ${elements.details[3].branchElement}[${elements.details[3].branchTenGod}]` : '미상'}`;
+
   let partnerSection = '';
   if (theme === 'compatibility' && partnerInput && partnerChart) {
     const partnerGenderKo = partnerInput.gender === 'male' ? '남성' : '여성';
     const partnerHourText = partnerChart.hourPillar
       ? `${partnerChart.hourPillar.stem}${partnerChart.hourPillar.branch}`
       : '미상(시간 불명)';
+
+    const partnerElements = analyzeSajuElements(partnerChart);
+    const partnerElementStr = `[상대방 오행 및 십성 분석]
+오행 개수: 木(${partnerElements.elementsCount['木']}) 火(${partnerElements.elementsCount['火']}) 土(${partnerElements.elementsCount['土']}) 金(${partnerElements.elementsCount['金']}) 水(${partnerElements.elementsCount['水']})`;
+
     partnerSection = `
 [상대방 정보]
 성별: ${partnerGenderKo}
@@ -186,6 +274,7 @@ function buildPrompt(theme: FortuneTheme, input: SajuInput, chart: SajuChart, pa
 월주: ${partnerChart.monthPillar.stem}${partnerChart.monthPillar.branch}
 일주: ${partnerChart.dayPillar.stem}${partnerChart.dayPillar.branch}  ← 일간(${partnerChart.dayPillar.stem})이 상대방의 핵심 기질입니다
 시주: ${partnerHourText}
+${partnerElementStr}
 `;
   }
 
@@ -201,38 +290,28 @@ function buildPrompt(theme: FortuneTheme, input: SajuInput, chart: SajuChart, pa
 월주: ${chart.monthPillar.stem}${chart.monthPillar.branch}
 일주: ${chart.dayPillar.stem}${chart.dayPillar.branch}  ← 일간(${chart.dayPillar.stem})이 이 사람의 핵심 기질입니다
 시주: ${hourText}
+
+${elementStr}
 ${partnerSection}
-[현재 기준]
-${currentYear}년 ${currentMonth}월
+[현재 운의 흐름 (기준: ${currentYear}년 ${currentMonth}월)]
+현재 대운 (10년 주기): ${daewun}
+올해 세운 (1년 주기): ${sewun}
+이달의 월운: ${wolwun}
 
 [섹션별 작성 지침 — 반드시 준수]
 ${THEME_DIRECTIVES[theme]}
 
 [문체 및 표현 규칙]
 - 타겟 독자: 학생, 대학생, 취준생, 사회초년생, 직장인들이 깊이 공감할 수 있는 세련된 존댓말
-- 한자를 사용할 경우 반드시 바로 뒤에 괄호로 발음 표기 — 예: 甲(갑), 乙(을), 木(목), 火(화)
-- 낡은 명리학 한자어(비견·겁재·편인 등)는 풀어서 쓰거나 배제
+- 한자 사용 절대 금지 — 甲 대신 "봄 나무 기운", 土 대신 "흙의 기운" 처럼 반드시 한국어로 풀어서 표현
+- 낡은 명리학 한자어(비견·겁재·편인 등)는 풀어서 쓰거나 배제 (단, 오행 분석 결과를 바탕으로 해석할 때는 그 기운의 의미를 현대적으로 풀어서 설명할 것)
+- 불가피하게 명리학 용어(예: 비견, 편관 등)를 사용해야 할 경우, 반드시 괄호 안에 (나와 경쟁하는 기운), (나를 억누르는 규칙)처럼 현대적이고 직관적인 의미를 병기할 것
+- 건강상의 심각한 질병, 생명의 위협, 이혼 확정 등 내담자에게 공포감을 주거나 극단적으로 부정적인 예언은 절대 금지하며, 항상 예방과 긍정적인 방향의 조언으로 마무리할 것
 - 유치한 신조어나 밈은 쓰지 말고 진정성 있는 컨설턴트 톤으로
 - 이모지(🌟 🎯 💸 📝 등)를 문맥에 맞게 자연스럽게 2~3개 사용
 - 각 섹션 300자 내외, 전체 1200자 이상
 - 막연하고 두루뭉술한 표현 절대 금지 — 구체적인 직업명·월(月)·성격 특징·행동 지침을 반드시 명시
-- content 값 안에 **, *, #, __ 등 마크다운 서식 문자 사용 절대 금지 — 순수 텍스트만 작성
-
-[출력 형식 — 반드시 순수 JSON만 출력]
-마크다운 코드 블록(\`\`\`json 등) 절대 금지. 부연 설명 텍스트 일절 금지.
-반드시 아래 형식의 순수 JSON 객체로만 응답하세요:
-
-{
-  "summary": "이 사람의 사주를 꿰뚫는 트렌디한 한줄 요약 (50자 이내)",
-  "keywords": ["핵심 기질 키워드1", "핵심 기질 키워드2", "핵심 기질 키워드3"],
-  "sections": [
-    { "title": "${sectionTitles[0]}", "content": "섹션1 상세 풀이 (300자 내외)" },
-    { "title": "${sectionTitles[1]}", "content": "섹션2 상세 풀이 (300자 내외)" },
-    { "title": "${sectionTitles[2]}", "content": "섹션3 상세 풀이 (300자 내외)" },
-    { "title": "${sectionTitles[3]}", "content": "섹션4 상세 풀이 (300자 내외, 구체적 조언 포함)" }
-  ],
-  ${EXTRAS_SCHEMA[theme]}
-}`;
+- content 값 안에 **, *, #, __ 등 마크다운 서식 문자 사용 금지`;
 }
 
 // ─── Gemini 응답 파싱 ─────────────────────────────────────────────────────────
@@ -244,30 +323,27 @@ function parseGeminiResponse(text: string): {
   sections?: { title: string; content: string }[];
   extras?: SajuReadingExtras;
 } {
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    try {
-      const parsed = JSON.parse(jsonMatch[0]) as Record<string, unknown>;
-      const summary = typeof parsed.summary === 'string' ? parsed.summary : '';
-      const detail = typeof parsed.detail === 'string' ? parsed.detail : undefined;
-      const keywords = Array.isArray(parsed.keywords) ? (parsed.keywords as string[]) : undefined;
-      const sections = Array.isArray(parsed.sections)
-        ? (parsed.sections as { title: string; content: string }[])
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const jsonStr = jsonMatch ? jsonMatch[0] : text;
+    const parsed = JSON.parse(jsonStr) as Record<string, unknown>;
+    const summary = typeof parsed.summary === 'string' ? parsed.summary : '';
+    const detail = typeof parsed.detail === 'string' ? parsed.detail : undefined;
+    const keywords = Array.isArray(parsed.keywords) ? (parsed.keywords as string[]) : undefined;
+    const sections = Array.isArray(parsed.sections)
+      ? (parsed.sections as { title: string; content: string }[])
+      : undefined;
+    const extras =
+      typeof parsed.extras === 'object' && parsed.extras !== null
+        ? (parsed.extras as SajuReadingExtras)
         : undefined;
-      const extras =
-        typeof parsed.extras === 'object' && parsed.extras !== null
-          ? (parsed.extras as SajuReadingExtras)
-          : undefined;
-      console.log('[API] Gemini 응답 JSON 파싱 성공!');
-      return { summary, keywords, detail, sections, extras };
-    } catch (e: unknown) {
-      console.error('[API] Gemini 응답 JSON 파싱 실패 (파싱 에러):', e instanceof Error ? e.message : String(e));
-      console.log('[API] 파싱하려던 매칭 텍스트:', jsonMatch[0]);
-    }
-  } else {
-    console.warn('[API] Gemini 응답에서 JSON 형태를 찾지 못했습니다.');
+    console.log('[API] Gemini 응답 JSON 파싱 성공!');
+    return { summary, keywords, detail, sections, extras };
+  } catch (e: unknown) {
+    console.error('[API] Gemini 응답 JSON 파싱 실패 (파싱 에러):', e instanceof Error ? e.message : String(e));
+    console.log('[API] 파싱하려던 원본 텍스트:', text);
+    return { summary: '', detail: text };
   }
-  return { summary: '', detail: text };
 }
 
 // ─── Route Handler ────────────────────────────────────────────────────────────
@@ -336,7 +412,13 @@ export async function POST(req: NextRequest) {
 
     for (const modelName of MODEL_FALLBACK) {
       console.log(`[API] ${modelName} 모델 호출 시도 중...`);
-      const model = genAI.getGenerativeModel({ model: modelName });
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: getResponseSchema(theme),
+        }
+      });
       try {
         const result = await model.generateContent(prompt);
         responseText = result.response.text().trim();
