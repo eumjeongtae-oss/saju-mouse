@@ -6,9 +6,7 @@ import { useFortuneStore } from '@/stores/fortuneStore';
 import { Mascot, MascotPose } from '@/components/Mascot';
 import { FortuneTheme } from '@/types/api';
 import { getGanzhiYear } from '@/utils/format';
-import { AdBanner } from '@/components/AdBanner';
 import * as styles from './page.css';
-import { adBanner, adLabel } from '@/app/result/page.css';
 
 interface ThemeCardData {
   id: FortuneTheme;
@@ -173,9 +171,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className={adBanner}>
-        <span className={adLabel}>AD</span>
-        <AdBanner />
       </div>
     </div>
   );

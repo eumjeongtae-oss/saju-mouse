@@ -1,5 +1,4 @@
 import { Mascot } from '@/components/Mascot';
-import { AdBanner } from '@/components/AdBanner';
 import * as styles from '../page.css';
 
 export function ResultLoading() {
@@ -21,10 +20,6 @@ export function ResultLoading() {
         <span className={styles.loadingSubText}>평균 5~10초 정도 소요됩니다</span>
       </div>
 
-      <div className={styles.adBanner}>
-        <span className={styles.adLabel}>AD</span>
-        <AdBanner />
       </div>
-    </div>
   );
 }
