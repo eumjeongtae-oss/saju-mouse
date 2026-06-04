@@ -45,12 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko">
       <body>
-        <Script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ID}`}
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
+
         {GA_ID && (
           <>
             <Script

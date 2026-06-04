@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Script from 'next/script';
 
 declare global {
   interface Window {
@@ -23,14 +24,22 @@ export function AdBanner() {
   }, []);
 
   return (
-    <ins
-      ref={adRef}
-      className="adsbygoogle"
-      style={{ display: 'block' }}
-      data-ad-client="ca-pub-9683506902844084"
-      data-ad-slot="4530783276"
-      data-ad-format="auto"
-      data-full-width-responsive="true"
-    />
+    <>
+      <Script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9683506902844084"
+        crossOrigin="anonymous"
+        strategy="afterInteractive"
+      />
+      <ins
+        ref={adRef}
+        className="adsbygoogle"
+        style={{ display: 'block' }}
+        data-ad-client="ca-pub-9683506902844084"
+        data-ad-slot="4530783276"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+    </>
   );
 }
