@@ -80,12 +80,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 © {new Date().getFullYear()} 찍찍사주. All rights reserved.
               </p>
               <div className={styles.footerLinks}>
-                <a href="mailto:eumjeongtae@gmail.com" className={styles.footerLink}>
-                  Contact
+                <a href="/guide" className={styles.footerLink}>
+                  사주 가이드
                 </a>
                 <span className={styles.footerDivider}>·</span>
                 <a href="/privacy" className={styles.footerLink}>
                   개인정보처리방침
+                </a>
+                <span className={styles.footerDivider}>·</span>
+                <a href="mailto:eumjeongtae@gmail.com" className={styles.footerLink}>
+                  Contact
                 </a>
               </div>
             </footer>

@@ -21,6 +21,8 @@ export function useInputForm() {
   const [day, setDay] = useState(27);
   const [hour, setHour] = useState<number | null>(12);
   const [knowsTime, setKnowsTime] = useState(true);
+  const [isTwin, setIsTwin] = useState(false);
+  const [twinType, setTwinType] = useState<'older' | 'younger'>('older');
 
   // 궁합 모드 상태
   const [myInfo, setMyInfo] = useState<PersonState>(defaultPerson('male'));
@@ -71,6 +73,8 @@ export function useInputForm() {
     birthDay: p.day,
     birthHour: p.knowsTime ? p.hour : null,
     gender: p.gender,
+    isTwin: p.isTwin,
+    twinType: p.twinType,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -81,7 +85,7 @@ export function useInputForm() {
       setSajuInput(toSajuInput(myInfo));
       setPartnerInput(toSajuInput(partnerInfo));
     } else {
-      setSajuInput({ calendarType, birthYear: year, birthMonth: month, birthDay: day, birthHour: knowsTime ? hour : null, gender });
+      setSajuInput({ calendarType, birthYear: year, birthMonth: month, birthDay: day, birthHour: knowsTime ? hour : null, gender, isTwin, twinType });
     }
     router.push('/result');
   };
@@ -97,6 +101,8 @@ export function useInputForm() {
     day, setDay,
     hour, setHour,
     knowsTime, setKnowsTime,
+    isTwin, setIsTwin,
+    twinType, setTwinType,
     daysInCurrentMonth,
     // 궁합 모드
     myInfo, setMyInfo,

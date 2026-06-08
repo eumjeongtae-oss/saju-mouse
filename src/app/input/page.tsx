@@ -17,6 +17,8 @@ export default function InputPage() {
     day, setDay,
     hour, setHour,
     knowsTime, setKnowsTime,
+    isTwin, setIsTwin,
+    twinType, setTwinType,
     daysInCurrentMonth,
     myInfo, setMyInfo,
     partnerInfo, setPartnerInfo,
@@ -169,6 +171,40 @@ export default function InputPage() {
                 ))}
               </select>
               <div className={styles.selectArrow}>▼</div>
+            </div>
+          )}
+        </div>
+
+        {/* 쌍둥이 여부 */}
+        <div className={styles.formGroup}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <label className={styles.label}>👯 쌍둥이이신가요?</label>
+            <div
+              className={styles.checkboxContainer}
+              onClick={() => setIsTwin(!isTwin)}
+            >
+              <div className={`${styles.checkbox} ${isTwin ? styles.checkboxChecked : ''}`}>
+                {isTwin && '✓'}
+              </div>
+              네, 쌍둥이입니다
+            </div>
+          </div>
+          {isTwin && (
+            <div className={styles.segmentGroup} style={{ marginTop: '8px' }}>
+              <button
+                type="button"
+                className={`${styles.segmentButton} ${twinType === 'older' ? styles.segmentActive : ''}`}
+                onClick={() => setTwinType('older')}
+              >
+                첫째 ☝️
+              </button>
+              <button
+                type="button"
+                className={`${styles.segmentButton} ${twinType === 'younger' ? styles.segmentActive : ''}`}
+                onClick={() => setTwinType('younger')}
+              >
+                둘째 ✌️
+              </button>
             </div>
           )}
         </div>

@@ -15,7 +15,9 @@ function isSajuInput(value: unknown): value is SajuInput {
     typeof v.birthMonth === 'number' &&
     typeof v.birthDay === 'number' &&
     (v.birthHour === null || typeof v.birthHour === 'number') &&
-    (v.gender === 'male' || v.gender === 'female')
+    (v.gender === 'male' || v.gender === 'female') &&
+    (v.isTwin === undefined || typeof v.isTwin === 'boolean') &&
+    (v.twinType === undefined || v.twinType === 'older' || v.twinType === 'younger')
   );
 }
 
@@ -296,10 +298,14 @@ function buildPrompt(theme: FortuneTheme, input: SajuInput, chart: SajuChart, pa
     const partnerElementStr = `[상대방 오행 및 십성 분석]
 오행 개수: 木(${partnerElements.elementsCount['木']}) 火(${partnerElements.elementsCount['火']}) 土(${partnerElements.elementsCount['土']}) 金(${partnerElements.elementsCount['金']}) 水(${partnerElements.elementsCount['水']})`;
 
+    const partnerTwinText = partnerInput.isTwin 
+      ? `\n쌍둥이 여부: 쌍둥이 중 ${partnerInput.twinType === 'older' ? '첫째' : '둘째'}` 
+      : '';
+
     partnerSection = `
 [상대방 정보]
 성별: ${partnerGenderKo}
-출생년도: ${partnerInput.birthYear}년
+출생년도: ${partnerInput.birthYear}년${partnerTwinText}
 
 [상대방 사주 명식 - 천간지지 (원국)]
 년주: ${partnerChart.yearPillar.stem}${partnerChart.yearPillar.branch}
@@ -315,12 +321,16 @@ ${partnerElementStr}
     ? `[당신의 사주에 있는 특수 기운(살)]\n${mySinsal.join('\n')}` 
     : `[당신의 사주에 있는 특수 기운(살)]\n특정 살에 치우치지 않고 기운이 골고루 분배되어 있습니다. 오행의 특징을 무기로 삼으세요.`;
 
+  const twinText = input.isTwin 
+    ? `\n쌍둥이 여부: 쌍둥이 중 ${input.twinType === 'older' ? '첫째' : '둘째'}\n*주의: 쌍둥이 사주의 특성을 반영하여 명식을 섬세하게 풀이해 주세요.` 
+    : '';
+
   return `당신은 명리학에 깊은 지식을 가진 현대적이고 트렌디한 사주 전문가입니다.
 아래 사주 명식 데이터를 바탕으로 ${THEME_LABELS[theme]}을 진행해 주세요.
 
 [당신(본인) 정보]
 성별: ${genderKo}
-출생년도: ${input.birthYear}년
+출생년도: ${input.birthYear}년${twinText}
 
 [당신(본인) 사주 명식 - 천간지지 (원국)]
 년주: ${chart.yearPillar.stem}${chart.yearPillar.branch}

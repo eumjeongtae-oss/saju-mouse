@@ -28,6 +28,8 @@ export interface SajuInput {
   birthDay: number;
   birthHour: number | null; // 시(時)를 모를 경우 null
   gender: Gender;
+  isTwin?: boolean;
+  twinType?: 'older' | 'younger';
 }
 
 // 사주 명식 (만세력 계산 결과)
