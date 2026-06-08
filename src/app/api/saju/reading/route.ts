@@ -89,9 +89,9 @@ const THEME_LABELS: Record<FortuneTheme, string> = {
 const THEME_SECTION_TITLES: Record<FortuneTheme, string[]> = {
   general: [
     '⚡ 일간이 말하는 나의 본질과 숨겨진 기질',
+    '✨ 내 사주에 숨겨진 특별한 매력과 강력한 무기 (살)',
     '📅 과거 · 현재 · 미래 — 내 인생의 3막',
     '💼 사주가 가리키는 천직 분야와 그 이유',
-    '✨ 내 사주에 숨겨진 특별한 매력과 강력한 무기 (살)',
   ],
   yearly: [
     '🌊 올해 에너지 총평 — 상반기 vs 하반기 대비',
@@ -123,9 +123,9 @@ const THEME_SECTION_TITLES: Record<FortuneTheme, string[]> = {
 const THEME_DIRECTIVES: Record<FortuneTheme, string> = {
   general: `
 섹션 ①: 일간의 기운과 사주의 전반적인 에너지 균형(강약과 조후)을 분석하여 "당신은 ~한 기운을 타고난 사람"으로 시작해 타고난 성격·강점·한계를 구체적으로 서술
-섹션 ②: 과거(어린 시절~사회 진입 이전), 현재(지금 이 시점의 운기와 당면 과제), 미래(5~10년 후 가능성)를 각 2~3문장씩 명확히 서술
-섹션 ③: 이 사주의 오행과 십성(기질)을 바탕으로 가장 잠재력을 발휘할 수 있는 직업 3가지를 구체적인 직업명과 그 사주적 근거를 함께 서술
-섹션 ④: 프롬프트에 제공된 [당신의 사주에 있는 특수 기운(살)] 정보를 반드시 확인하고, 내 사주에 '실제로 있는' 특수 살(도화, 역마, 백호 등) 중 가장 두드러지는 것을 골라 이를 긍정적인 무기로 활용하는 방법을 구체적으로 서술할 것 (없는 살을 지어내지 말 것)
+섹션 ②: 프롬프트에 제공된 [당신의 사주에 있는 특수 기운(살)] 정보를 반드시 확인하고, 내 사주에 '실제로 있는' 특수 살(도화, 역마, 백호 등) 중 가장 두드러지는 것을 골라 이를 긍정적인 무기로 활용하는 방법을 구체적으로 서술할 것 (없는 살을 지어내지 말 것)
+섹션 ③: 과거(어린 시절~사회 진입 이전), 현재(지금 이 시점의 운기와 당면 과제), 미래(5~10년 후 가능성)를 각 2~3문장씩 명확히 서술
+섹션 ④: 이 사주의 오행과 십성(기질)을 바탕으로 가장 잠재력을 발휘할 수 있는 직업 3가지를 구체적인 직업명과 그 사주적 근거를 함께 서술
 extras.birthElement: 일간의 기운을 한글로만 표현 (예: "갑목 — 봄의 나무, 개척과 성장의 에너지")
 extras.careers: 직업명 3개 배열 (name, reason 각 한 줄)
 extras.compatibleType: 잘 맞는 귀인 특징 한 문장 요약
@@ -165,8 +165,9 @@ extras.benefactorZodiac: 금전적으로 유리한 기회를 가져다줄 귀인
 섹션 ③: 당신과 에너지가 충돌하는 상극인 이성 유형과 그 관계에서 반복될 문제 패턴 2~3가지를 명확히
 섹션 ④: 현재 시점의 연애운 평가(좋음/보통/하강 중 등 명확히 판단) + 좋은 인연이 찾아올 가능성이 높은 시기나 계기
 extras.loveStyle: 연애 유형 한 단어 (예: "헌신형")
-extras.compatibleTraits: 잘 맞는 이성 특징 배열 3개
-extras.incompatibleTraits: 피해야 할 이성 특징 배열 2~3개
+extras.attractionPoint: 뻔한 형용사를 절대 쓰지 말고, 내가 이성에게 묘하게 끌리거나 마음을 여는 구체적인 상황 1~2문장 (예: "내가 예민해져 있을 때 논리적으로 따지기보다 조용히 내 페이스를 기다려줄 때")
+extras.conflictPoint: 단순히 '집착하는 사람'이 아니라, 내 사주의 기질과 부딪혀서 연애가 파국으로 치닫게 되는 구체적인 갈등 상황 1~2문장 (예: "나의 자유로운 역마 기운을 이해하지 못하고, 일일이 동선을 통제하려 들 때")
+extras.idealType: 사주 오행의 상호보완을 비유한 이상형 묘사 1문장 (예: "나의 날카로운 쇠(金) 기운을 부드럽게 녹여줄 수 있는, 품이 넓은 불(火) 기운을 가진 사람")
 extras.bestPeriod: 인연이 찾아오는 시기 표현
 extras.myWeapon: 이성에게 어필할 수 있는 나만의 치명적인 사주적 매력 (예: "은근히 사람을 끄는 홍염살의 매력")
 extras.benefactorZodiac: 좋은 인연을 맺어주거나 연애 조언을 구하기 좋은 귀인의 띠
@@ -249,12 +250,13 @@ function getResponseSchema(theme: FortuneTheme): Schema {
     extrasReq.push("moneyType", "topFields", "warningHabit", "myWeapon", "benefactorZodiac");
   } else if (theme === 'love') {
     extrasProps.loveStyle = { type: SchemaType.STRING };
-    extrasProps.compatibleTraits = { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } };
-    extrasProps.incompatibleTraits = { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } };
+    extrasProps.attractionPoint = { type: SchemaType.STRING };
+    extrasProps.conflictPoint = { type: SchemaType.STRING };
+    extrasProps.idealType = { type: SchemaType.STRING };
     extrasProps.bestPeriod = { type: SchemaType.STRING };
     extrasProps.myWeapon = { type: SchemaType.STRING };
     extrasProps.benefactorZodiac = { type: SchemaType.STRING };
-    extrasReq.push("loveStyle", "compatibleTraits", "incompatibleTraits", "bestPeriod", "myWeapon", "benefactorZodiac");
+    extrasReq.push("loveStyle", "attractionPoint", "conflictPoint", "idealType", "bestPeriod", "myWeapon", "benefactorZodiac");
   } else if (theme === 'compatibility') {
     extrasProps.compatibilityScore = { type: SchemaType.INTEGER };
     extrasProps.coupleType = { type: SchemaType.STRING };

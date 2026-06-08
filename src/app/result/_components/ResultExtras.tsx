@@ -123,24 +123,22 @@ export function ResultExtras({ theme, extras }: Props) {
               <div className={styles.extrasInfoValue}>{extras.loveStyle}</div>
             </div>
           )}
-          {(extras.compatibleTraits || extras.incompatibleTraits) && (
-            <div className={styles.traitsRow}>
-              {extras.compatibleTraits && (
-                <div className={styles.traitsBlock}>
-                  <div className={styles.traitsBlockTitle}>✅ 잘 맞는 이성</div>
-                  {extras.compatibleTraits.map((t, i) => (
-                    <div key={i} className={styles.traitItem}>{t}</div>
-                  ))}
-                </div>
-              )}
-              {extras.incompatibleTraits && (
-                <div className={styles.traitsBlock}>
-                  <div className={styles.traitsBlockTitle}>❌ 피해야 할 이성</div>
-                  {extras.incompatibleTraits.map((t, i) => (
-                    <div key={i} className={styles.traitItem}>{t}</div>
-                  ))}
-                </div>
-              )}
+          {extras.attractionPoint && (
+            <div>
+              <div className={styles.extrasInfoLabel}>💖 내 마음이 열리는 결정적 순간</div>
+              <div className={styles.extrasInfoValue}>{extras.attractionPoint}</div>
+            </div>
+          )}
+          {extras.idealType && (
+            <div>
+              <div className={styles.extrasInfoLabel}>🧲 사주로 본 나의 소울메이트</div>
+              <div className={styles.extrasInfoValue}>{extras.idealType}</div>
+            </div>
+          )}
+          {extras.conflictPoint && (
+            <div>
+              <div className={styles.extrasInfoLabel}>⚠️ 연애가 삐걱대는 결정적 원인</div>
+              <div className={styles.extrasInfoValue}>{extras.conflictPoint}</div>
             </div>
           )}
           {extras.bestPeriod && (
@@ -180,24 +178,7 @@ export function ResultExtras({ theme, extras }: Props) {
         </>
       )}
 
-      {/* 테마 무관 공통 속성 */}
-      {(extras.myWeapon || extras.benefactorZodiac) && (
-        <>
-          <div style={{ borderTop: '2.5px dashed #E5E7EB', margin: '4px 0' }} />
-          {extras.myWeapon && (
-            <div>
-              <div className={styles.extrasInfoLabel}>⚔️ 나만의 필살기 (무기)</div>
-              <div className={styles.extrasInfoValue}>{extras.myWeapon}</div>
-            </div>
-          )}
-          {extras.benefactorZodiac && (
-            <div>
-              <div className={styles.extrasInfoLabel}>🤝 나를 돕는 귀인</div>
-              <div className={styles.extrasInfoValue}>{extras.benefactorZodiac}</div>
-            </div>
-          )}
-        </>
-      )}
+
     </div>
   );
 }

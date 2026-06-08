@@ -58,8 +58,9 @@ export interface SajuReadingExtras {
   warningHabit?: string;
   // love
   loveStyle?: string;
-  compatibleTraits?: string[];
-  incompatibleTraits?: string[];
+  attractionPoint?: string;
+  conflictPoint?: string;
+  idealType?: string;
   bestPeriod?: string;
   // compatibility
   compatibilityScore?: number;
