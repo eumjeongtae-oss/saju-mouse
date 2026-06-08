@@ -31,14 +31,21 @@ export default function InputPage() {
   const years = Array.from({ length: 87 }, (_, i) => 2026 - i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const days = Array.from({ length: daysInCurrentMonth }, (_, i) => i + 1);
-  const hours = Array.from({ length: 24 }, (_, i) => i);
 
-  const getTraditionalHourName = (h: number): string => {
-    const names = ['자시','축시','인시','묘시','진시','사시','오시','미시','신시','유시','술시','해시'];
-    const animals = ['쥐','소','호랑이','토끼','용','뱀','말','양','원숭이','닭','개','돼지'];
-    const idx = h === 23 ? 0 : Math.floor((h + 1) / 2) % 12;
-    return `${names[idx]} (${animals[idx]})`;
-  };
+  const TIME_RANGES = [
+    { value: 0, label: '23:30 ~ 01:30 (자시 - 쥐)' },
+    { value: 2, label: '01:30 ~ 03:30 (축시 - 소)' },
+    { value: 4, label: '03:30 ~ 05:30 (인시 - 호랑이)' },
+    { value: 6, label: '05:30 ~ 07:30 (묘시 - 토끼)' },
+    { value: 8, label: '07:30 ~ 09:30 (진시 - 용)' },
+    { value: 10, label: '09:30 ~ 11:30 (사시 - 뱀)' },
+    { value: 12, label: '11:30 ~ 13:30 (오시 - 말)' },
+    { value: 14, label: '13:30 ~ 15:30 (미시 - 양)' },
+    { value: 16, label: '15:30 ~ 17:30 (신시 - 원숭이)' },
+    { value: 18, label: '17:30 ~ 19:30 (유시 - 닭)' },
+    { value: 20, label: '19:30 ~ 21:30 (술시 - 개)' },
+    { value: 22, label: '21:30 ~ 23:30 (해시 - 돼지)' },
+  ];
 
   // ── 궁합 모드 ──────────────────────────────────────────────────
   if (isCompatibility) {
@@ -155,9 +162,9 @@ export default function InputPage() {
           {knowsTime && (
             <div className={styles.selectWrapper}>
               <select className={styles.select} value={hour ?? 12} onChange={(e) => setHour(Number(e.target.value))}>
-                {hours.map((h) => (
-                  <option key={h} value={h}>
-                    {h.toString().padStart(2, '0')}시 — {getTraditionalHourName(h)}
+                {TIME_RANGES.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
                   </option>
                 ))}
               </select>

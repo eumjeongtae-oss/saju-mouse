@@ -4,21 +4,20 @@ import React, { useEffect } from 'react';
 import { Gender, CalendarType } from '@/types/api';
 import * as styles from '../page.css';
 
-const getTraditionalHourName = (hour: number): string => {
-  if (hour === 23 || hour === 0) return '자시 (子時 - 쥐)';
-  if (hour === 1 || hour === 2) return '축시 (丑時 - 소)';
-  if (hour === 3 || hour === 4) return '인시 (寅時 - 호랑이)';
-  if (hour === 5 || hour === 6) return '묘시 (卯時 - 토끼)';
-  if (hour === 7 || hour === 8) return '진시 (辰時 - 용)';
-  if (hour === 9 || hour === 10) return '사시 (巳時 - 뱀)';
-  if (hour === 11 || hour === 12) return '오시 (午時 - 말)';
-  if (hour === 13 || hour === 14) return '미시 (未時 - 양)';
-  if (hour === 15 || hour === 16) return '신시 (申時 - 원숭이)';
-  if (hour === 17 || hour === 18) return '유시 (酉時 - 닭)';
-  if (hour === 19 || hour === 20) return '술시 (戌時 - 개)';
-  if (hour === 21 || hour === 22) return '해시 (亥時 - 돼지)';
-  return '';
-};
+const TIME_RANGES = [
+  { value: 0, label: '23:30 ~ 01:30 (자시 - 쥐)' },
+  { value: 2, label: '01:30 ~ 03:30 (축시 - 소)' },
+  { value: 4, label: '03:30 ~ 05:30 (인시 - 호랑이)' },
+  { value: 6, label: '05:30 ~ 07:30 (묘시 - 토끼)' },
+  { value: 8, label: '07:30 ~ 09:30 (진시 - 용)' },
+  { value: 10, label: '09:30 ~ 11:30 (사시 - 뱀)' },
+  { value: 12, label: '11:30 ~ 13:30 (오시 - 말)' },
+  { value: 14, label: '13:30 ~ 15:30 (미시 - 양)' },
+  { value: 16, label: '15:30 ~ 17:30 (신시 - 원숭이)' },
+  { value: 18, label: '17:30 ~ 19:30 (유시 - 닭)' },
+  { value: 20, label: '19:30 ~ 21:30 (술시 - 개)' },
+  { value: 22, label: '21:30 ~ 23:30 (해시 - 돼지)' },
+];
 
 export interface PersonState {
   gender: Gender;
@@ -60,7 +59,6 @@ export function PersonInputPanel({ label, accent, state, onChange }: PersonInput
   const years = Array.from({ length: 87 }, (_, i) => 2026 - i);
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   const days = Array.from({ length: daysInCurrentMonth }, (_, i) => i + 1);
-  const hours = Array.from({ length: 24 }, (_, i) => i);
 
   const accentColor = accent === 'purple' ? '#7C3AED' : '#EC4899';
   const accentBg = accent === 'purple' ? '#EEF2FF' : '#FFF0F6';
@@ -173,9 +171,9 @@ export function PersonInputPanel({ label, accent, state, onChange }: PersonInput
           {state.knowsTime && (
             <div className={styles.selectWrapper}>
               <select className={styles.select} value={state.hour ?? 12} onChange={(e) => onChange({ ...state, hour: Number(e.target.value) })}>
-                {hours.map((h) => (
-                  <option key={h} value={h}>
-                    {h.toString().padStart(2, '0')}시 — {getTraditionalHourName(h)}
+                {TIME_RANGES.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
                   </option>
                 ))}
               </select>

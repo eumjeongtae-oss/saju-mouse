@@ -163,17 +163,17 @@ function ResultPageContent() {
         <ResultExtras theme={selectedTheme} extras={data.extras} />
       )}
 
-      {/* 행운 처방전 */}
+      {/* 사주 처방전 */}
       <div className={styles.luckyContainer}>
-        <h3 className={styles.luckyTitle}>🍀 찍쥐의 행운 비책 아이템</h3>
+        <h3 className={styles.luckyTitle}>🔮 찍쥐의 사주 요약 비책</h3>
         <div className={styles.luckyRow}>
           <div className={styles.luckyItem}>
-            <span className={styles.luckyLabel}>행운의 컬러</span>
-            <span className={styles.luckyValue}>{data?.extras?.luckyColor ?? '보라색 (Purple) 💜'}</span>
+            <span className={styles.luckyLabel}>나만의 사주 무기</span>
+            <span className={styles.luckyValue}>{data?.extras?.myWeapon ?? '어떤 시련도 이겨내는 강인한 끈기 🔥'}</span>
           </div>
           <div className={styles.luckyItem}>
-            <span className={styles.luckyLabel}>행운의 아이템</span>
-            <span className={styles.luckyValue}>{data?.extras?.luckyItem ?? '노란 스위스 에멘탈 치즈 🧀'}</span>
+            <span className={styles.luckyLabel}>나를 돕는 귀인의 띠</span>
+            <span className={styles.luckyValue}>{data?.extras?.benefactorZodiac ?? '호랑이띠, 말띠 (나의 부족한 기운을 채워줌) 🐯🐎'}</span>
           </div>
         </div>
       </div>
@@ -195,10 +195,10 @@ function ResultPageContent() {
       </div>
 
       {/* 배너 광고 영역 */}
-      <div className={styles.adBanner}>
+      {/* <div className={styles.adBanner}>
         <span className={styles.adLabel}>AD</span>
         <AdBanner />
-      </div>
+      </div> */}
 
       {/* 다시 운세 보기 */}
       <button className={styles.restartButton} onClick={handleRestart}>

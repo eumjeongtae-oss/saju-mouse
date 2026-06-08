@@ -64,8 +64,8 @@ export interface SajuReadingExtras {
   synergyPoint?: string;
   advice?: string;
   // shared
-  luckyColor?: string;
-  luckyItem?: string;
+  myWeapon?: string;
+  benefactorZodiac?: string;
 }
 
 // LLM 풀이 결과
