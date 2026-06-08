@@ -8,7 +8,7 @@ interface Props {
 
 const EXTRAS_TITLE: Record<FortuneTheme, string> = {
   general: '🔮 나에게 딱 맞는 것들',
-  yearly: '📅 이달의 주목 포인트',
+  yearly: '📅 올해 이것만은 꼭!',
   wealth: '💎 재물 핵심 요약',
   love: '💝 연애 핵심 요약',
   compatibility: '💞 두 사람의 궁합 요약',
@@ -71,6 +71,12 @@ export function ResultExtras({ theme, extras }: Props) {
                 <span className={styles.monthHighlightLabel}>⚠️ 조심할 달</span>
                 <span className={styles.monthHighlightValue}>{extras.worstMonth ?? '—'}</span>
               </div>
+            </div>
+          )}
+          {extras.cautionPoint && (
+            <div>
+              <div className={styles.extrasInfoLabel}>🚨 올해 주의할 점</div>
+              <div className={styles.extrasInfoValue}>{extras.cautionPoint}</div>
             </div>
           )}
           {extras.keyAction && (
@@ -169,6 +175,25 @@ export function ResultExtras({ theme, extras }: Props) {
             <div>
               <div className={styles.extrasInfoLabel}>💡 예쁜 사랑을 위한 조언</div>
               <div className={styles.extrasInfoValue}>{extras.advice}</div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* 테마 무관 공통 속성 */}
+      {(extras.myWeapon || extras.benefactorZodiac) && (
+        <>
+          <div style={{ borderTop: '2.5px dashed #E5E7EB', margin: '4px 0' }} />
+          {extras.myWeapon && (
+            <div>
+              <div className={styles.extrasInfoLabel}>⚔️ 나만의 필살기 (무기)</div>
+              <div className={styles.extrasInfoValue}>{extras.myWeapon}</div>
+            </div>
+          )}
+          {extras.benefactorZodiac && (
+            <div>
+              <div className={styles.extrasInfoLabel}>🤝 나를 돕는 귀인</div>
+              <div className={styles.extrasInfoValue}>{extras.benefactorZodiac}</div>
             </div>
           )}
         </>

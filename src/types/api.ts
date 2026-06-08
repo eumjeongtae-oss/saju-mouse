@@ -50,6 +50,7 @@ export interface SajuReadingExtras {
   // yearly
   bestMonth?: string;
   worstMonth?: string;
+  cautionPoint?: string;
   keyAction?: string;
   // wealth
   moneyType?: string;
