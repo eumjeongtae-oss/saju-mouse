@@ -1,4 +1,5 @@
 import { Mascot } from '@/components/Mascot';
+import { KakaoAdFit } from '@/components/KakaoAdFit';
 import * as styles from '../page.css';
 
 export function ResultLoading() {
@@ -20,6 +21,9 @@ export function ResultLoading() {
         <span className={styles.loadingSubText}>평균 5~10초 정도 소요됩니다</span>
       </div>
 
+      <div style={{ marginTop: '30px' }}>
+        <KakaoAdFit unit="DAN-zfqXHxwjtZZBBnby" width="320" height="100" />
       </div>
+    </div>
   );
 }

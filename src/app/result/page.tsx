@@ -6,7 +6,7 @@ import { useFortuneStore } from '@/stores/fortuneStore';
 import { useSajuMutation } from '@/hooks/mutations/useSajuMutation';
 import { useResultActions } from './_hooks/useResultActions';
 import { Mascot } from '@/components/Mascot';
-import { AdBanner } from '@/components/AdBanner';
+import { KakaoAdFit } from '@/components/KakaoAdFit';
 import { ResultLoading } from './_components/ResultLoading';
 import { ResultError } from './_components/ResultError';
 import { ResultExtras } from './_components/ResultExtras';
@@ -194,11 +194,11 @@ function ResultPageContent() {
         </div>
       </div>
 
-      {/* 배너 광고 영역 */}
-      {/* <div className={styles.adBanner}>
-        <span className={styles.adLabel}>AD</span>
-        <AdBanner />
-      </div> */}
+      {/* 배너 광고 영역 (카카오 애드핏) */}
+      <div className={styles.adBanner}>
+        {/* <span className={styles.adLabel}>AD</span> */}
+        <KakaoAdFit unit="DAN-lnAbYSfdoqULbx4N" width="320" height="100" />
+      </div>
 
       {/* 다시 운세 보기 */}
       <button className={styles.restartButton} onClick={handleRestart}>

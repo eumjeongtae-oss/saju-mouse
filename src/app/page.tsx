@@ -6,6 +6,7 @@ import { useFortuneStore } from '@/stores/fortuneStore';
 import { Mascot, MascotPose } from '@/components/Mascot';
 import { FortuneTheme } from '@/types/api';
 import { getGanzhiYear } from '@/utils/format';
+import { KakaoAdFit } from '@/components/KakaoAdFit';
 import * as styles from './page.css';
 
 interface ThemeCardData {
@@ -170,6 +171,9 @@ export default function HomePage() {
           <p className={styles.cardDesc}>{compatibilityCard.description}</p>
         </div>
       </div>
+
+      {/* 카카오 애드핏 광고 (메인페이지) */}
+      <KakaoAdFit unit="DAN-xJEBhMxiyYqE1aYr" width="320" height="100" />
 
     </div>
   );

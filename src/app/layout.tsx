@@ -33,13 +33,9 @@ export const metadata: Metadata = {
     description: '하찮고 귀여운 쥐 마스코트 찍쥐가 명쾌하게 풀어주는 현대적인 사주팔자/만세력 서비스다 ',
     images: ['/kakaotalk-profile.png'],
   },
-  other: {
-    'google-adsense-account': 'ca-pub-9683506902844084',
-  },
 };
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
-const ADSENSE_ID = 'ca-pub-9683506902844084';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -299,16 +299,16 @@ export const luckyValue = style({
 
 // 4. 구글 배너 광고 영역 (AdSense Wrapper)
 export const adBanner = style({
-  width: '100%',
-  borderWidth: '2.5px',
-  borderStyle: 'solid',
-  borderColor: '#1F2937',
-  borderRadius: vars.radii.md,
-  padding: '0',
-  position: 'relative',
-  boxShadow: '2px 2px 0px #1F2937',
-  margin: '10px 0',
-  overflow: 'hidden',
+  // width: '100%',
+  // borderWidth: '2.5px',
+  // borderStyle: 'solid',
+  // borderColor: '#1F2937',
+  // borderRadius: vars.radii.md,
+  // padding: '0',
+  // position: 'relative',
+  // boxShadow: '2px 2px 0px #1F2937',
+  // margin: '10px 0',
+  // overflow: 'hidden',
 });
 
 export const adLabel = style({
